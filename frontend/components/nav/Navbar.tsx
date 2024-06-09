@@ -19,7 +19,7 @@ const Navbar = () => {
             <Link
               href={link.href}
               key={link.id}
-              className={`flex items-center gap-1 px-5 py-3.5 rounded-xl  ${
+              className={`flex items-center gap-1 px-5 py-2.5 rounded-xl  ${
                 pathname === link.href
                   ? 'bg-primary text-white '
                   : 'hover:bg-primary/10 hover:text-primary duration-100 ease-linear'

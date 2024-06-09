@@ -8,21 +8,22 @@ export const createAccount = async ({
   lastName,
   email,
   password,
+  companyId,
 }: {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  companyId: number;
 }) => {
-  const res = await axios('http://localhost:8080/signup', {
-    method: 'POST',
-    data: {
-      firstName,
-      lastName,
-      email,
-      password,
-      role: 'ADMIN',
-    },
+  const res = await axios.post('http://localhost:8080/signup', {
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    password: password,
+    role: 'ADMIN',
+    company_id: companyId,
+    position: 'Manager',
   });
 
   return res.data;
@@ -55,21 +56,18 @@ export const createCompany = async ({
   name,
   email,
   logoUrl,
-  users,
 }: {
   name: string;
   email: string;
   logoUrl: string;
-  users: string[];
 }) => {
   const res = await axios.post('http://localhost:8080/create-company', {
     name,
     email,
     logoUrl,
-    users,
   });
 
-  return res;
+  return res.data;
 };
 
 export const getTokenValues = async () => {

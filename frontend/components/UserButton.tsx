@@ -26,15 +26,15 @@ const UserButton = ({ user }: { user: TUser }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        {user?.imgUrl === '' ? (
+        {user?.img_url === '' ? (
           <div className='h-12 w-12 rounded-md bg-primary border border-border text-white flex items-center justify-center text-xl font-bold'>
-            {user?.firstName[0]}
-            {user?.lastName[0]}
+            {user?.first_name[0]}
+            {user?.last_name[0]}
           </div>
         ) : (
           <Image
             alt='profile'
-            src={user?.imgUrl}
+            src={user?.img_url}
             height={500}
             className='h-12 w-12 object-cover rounded-md'
             width={500}
@@ -43,15 +43,15 @@ const UserButton = ({ user }: { user: TUser }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <div className='py-4 flex items-center justify-center gap-2'>
-          {user?.imgUrl === '' ? (
+          {user?.img_url === '' ? (
             <div className='h-12 w-12 rounded-md bg-primary border border-border flex items-center justify-center text-xl text-white font-bold'>
-              {user?.firstName[0]}
-              {user?.lastName[0]}
+              {user?.first_name[0]}
+              {user?.last_name[0]}
             </div>
           ) : (
             <Image
               alt='profile'
-              src={user?.imgUrl}
+              src={user?.img_url}
               height={500}
               className='h-12 w-12 object-cover rounded-md'
               width={500}
@@ -59,7 +59,7 @@ const UserButton = ({ user }: { user: TUser }) => {
           )}
           <div className='flex flex-col items-start justify-start'>
             <p className='text-lg font-semibold'>
-              {user?.firstName} {user?.lastName}
+              {user?.first_name} {user?.last_name}
             </p>
             <p className='text-sm text-muted-foreground'>{user?.role}</p>
           </div>

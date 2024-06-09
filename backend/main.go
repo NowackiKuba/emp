@@ -1,15 +1,22 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"movies.app/movies/routes"
-)
-  
-  func main() {
+	"fmt"
 
+	"example.com/employees/db"
+	"example.com/employees/routes"
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	db.Connect()
 	server := gin.Default()
+
 	routes.RegisterRoutes(server)
 
-	server.Run(":8080")
-  }
-  
+	err := server.Run(":8080")
+	if err != nil { 
+		fmt.Print(err)
+	}
+
+}

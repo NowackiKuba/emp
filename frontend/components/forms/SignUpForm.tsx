@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import { useMutation } from '@tanstack/react-query';
 import { createAccount } from '@/actions/auth.actions';
 import { toast } from '../ui/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,8 @@ const SignUpForm = () => {
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
   const [isSignin, setIsSigning] = useState(false);
-
+  const searchParams = useSearchParams();
+  const companyId = searchParams?.get('companyId');
   const signup = async () => {
     try {
       setIsSigning(true);
@@ -30,6 +31,7 @@ const SignUpForm = () => {
         firstName,
         lastName,
         password,
+        companyId: Number(companyId),
       });
       console.log(res);
       toast({
@@ -37,8 +39,7 @@ const SignUpForm = () => {
         description: 'Your account has been created successfully',
         duration: 1500,
       });
-      const userId = await res.userId;
-      router.push(`/create-company/?userId=${userId}`);
+      router.push('sign-in');
     } catch (error) {
       toast({
         title: 'Error',
@@ -74,15 +75,6 @@ const SignUpForm = () => {
   //   },
   // });
   // console.log(data);
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-  const generateUsername = () => {
-    let username = '';
-    for (let i = 0; i < 4; i++) {
-      username += numbers[Math.floor(Math.random() * numbers.length)];
-    }
-    username = `${firstName}${lastName}${username}`;
-    return username;
-  };
   return (
     <Card className='w-[450px] h-[500px] flex flex-col items-center justify-start py-3'>
       <p className='text-2xl font-[600]'>Create Account</p>

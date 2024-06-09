@@ -3,23 +3,24 @@ type TResult = Result;
 type TMovie = Movie;
 type TCompany = Company;
 type TDialogProps = DialogProps;
+type TTask = Task;
 
 interface User {
   _id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   role: string;
-  imgUrl: string;
-  updatedAt: Date;
-  createdAt: Date;
+  img_url: string;
+  updated_at: Date;
+  created_at: Date;
   position: string;
-  workStart: Date;
-  workEnd: Date;
-  isWorking: boolean;
-  isOnVacation: boolean;
-  isOnBreak: boolean;
+  work_start: Date;
+  work_end: Date;
+  is_working: boolean;
+  is_on_vacation: boolean;
+  is_on_break: boolean;
 }
 
 interface Movie {
@@ -57,4 +58,18 @@ interface Company {
 interface DialogProps {
   open: boolean;
   setOpen: (v: boolean) => void;
+}
+
+interface Task {
+  _id: string;
+  title: string;
+  description: string;
+  priority: number;
+  assignedBy: User;
+  assignedTo: User;
+  deadline: Date;
+  companyId: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

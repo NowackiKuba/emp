@@ -5,13 +5,9 @@ import { cookies } from 'next/headers';
 import { getTokenValues } from './auth.actions';
 
 export const getCurrentUser = async () => {
-  const token = await cookies().get('token');
+  const { userId } = await getTokenValues();
 
-  if (!token) {
-    return null;
-  }
-
-  const res = await axios(`http://localhost:8080/user/${token.value}`, {
+  const res = await axios(`http://localhost:8080/user/${userId}`, {
     method: 'GET',
   });
 
@@ -39,16 +35,20 @@ export const createEmployeeAccount = async ({
   const res = await axios(`http://localhost:8080/create-employee`, {
     method: 'POST',
     data: {
-      firstName,
-      lastName,
+      first_name: firstName,
+      last_name: lastName,
       email,
       password,
       role,
       position,
-      company: companyId,
-      imgUrl: image,
+      company_id: companyId,
+      img_url: image,
     },
   });
 
   return;
+};
+
+export const Test = async () => {
+  return await getTokenValues();
 };

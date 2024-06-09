@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { CirclePlus } from 'lucide-react';
+import { CirclePlus, Settings } from 'lucide-react';
 import CreateEmployee from '../dialogs/CreateEmployee';
 import {
   Table,
@@ -13,14 +13,67 @@ import {
 } from '../ui/table';
 import { useCompanyEmployees } from '@/hooks/useCompanyEmployees';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import Searchbar from '../Searchbar';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
+  const [activeSort, setActiveSort] = useState<string | undefined>();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const handleSort = (item: string) => {
+    if (activeSort === item) {
+      setActiveSort(undefined);
+      const newUrl = removeKeysFromQuery({
+        keysToRemove: ['sort'],
+        params: searchParams.toString(),
+      });
+
+      router.push(newUrl, { scroll: false });
+    } else {
+      setActiveSort(item);
+      const newUrl = formUrlQuery({
+        key: 'sort',
+        params: searchParams.toString(),
+        value: item,
+      });
+
+      router.push(newUrl, { scroll: false });
+    }
+  };
+
+  if (isLoading) {
+    return <p>...loading</p>;
+  }
   return (
     <div className='flex flex-col w-full gap-4'>
       <div className='flex items-center justify-between w-full'>
-        <div />
+        <div className='flex items-center w-full gap-2'>
+          <Searchbar
+            placeholder='Search for employees'
+            iconPosition='left'
+            route='/employees'
+            otherClasses='xl:max-w-[280px]'
+          />
+          <Select onValueChange={(e) => handleSort(e)}>
+            <SelectTrigger className='xl:max-w-[200px]'>
+              <SelectValue placeholder='Sort' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='newest'>Newest</SelectItem>
+              <SelectItem value='oldest'>Oldest</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div className='flex items-center gap-2'>
           <Button
             onClick={() => setIsOpenCreate(true)}
@@ -50,19 +103,19 @@ const Employees = () => {
                 <TableCell>
                   <Avatar className='h-16 w-16 rounded-md'>
                     <AvatarImage
-                      src={employee.imgUrl}
+                      src={employee.img_url}
                       className='h-16 w-16 rounded-md object-cover'
                     />
                     <AvatarFallback className='h-16 w-16 rounded-md'>
                       <div className='h-full w-full bg-primary/10 text-primary dark:bg-red-500/20 dark:text-red-200 flex items-center justify-center text-xl font-bold'>
-                        {employee.firstName[0]}
-                        {employee.lastName[0]}
+                        {employee.first_name[0]}
+                        {employee.last_name[0]}
                       </div>
                     </AvatarFallback>
                   </Avatar>
                 </TableCell>
                 <TableCell>
-                  {employee.firstName} {employee.lastName}
+                  {employee.first_name} {employee.last_name}
                 </TableCell>
                 <TableCell>{employee.email}</TableCell>
                 <TableCell>{employee.position}</TableCell>
@@ -70,13 +123,18 @@ const Employees = () => {
                   {employee.role.toLowerCase()}
                 </TableCell>
                 <TableCell>
-                  {employee?.isWorking
+                  {employee?.is_working
                     ? 'Working'
-                    : employee?.isOnVacation
+                    : employee?.is_on_vacation
                     ? 'Vacation'
-                    : employee?.isOnBreak
+                    : employee?.is_on_break
                     ? 'break'
                     : 'Not working'}
+                </TableCell>
+                <TableCell className='flex justify-end items-end'>
+                  <Button variant={'ghost'} size={'icon'}>
+                    <Settings />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

@@ -1,242 +1,205 @@
 package models
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
-	"movies.app/movies/db"
-	"movies.app/movies/utils"
+	"example.com/employees/db"
+	"example.com/employees/utils"
 )
 
-type User struct { 
-	ID primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
-	FirstName string `bson:"firstName,omitempty" json:"firstName"`
-	LastName string `bson:"lastName,omitempty" json:"lastName"`
-	Email string `bson:"email,omitempty" json:"email"`
-	Password string `bson:"password,omitempty" json:"password"`
-	ImgUrl string `bson:"imgUrl,omitempty" json:"imgUrl"`
-	CreatedAt time.Time `bson:"createdAt,omitempty" json:"createdAt"`
-	UpdatedAt time.Time `bson:"updatedAt,omitempty" json:"updatedAt"`
-	Role string `bson:"role" json:"role"`
-	Company primitive.ObjectID `bson:"company, omitempty" json:"company"`
-	Position string `bson:"position" json:"position"`
-	IsOnVacation bool `bson:"isOnVacation, omitempty" json:"isOnVacation"`
-	IsOnBreak bool `bson:"isOnBreak, omitempty" json:"isOnBreak"`
-	WorkStart time.Time `bson:"workStart, omitempty" json:"workStart"`
-	WorkEnd time.Time `bson:"workEnd, omitempty" json:"workEnd"`
-	IsWorking bool `bson:"isWorking, omitempty" json:"isWorking"`
 
+type User struct {
+	ID           int32     `json:"id"`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	Email        string    `json:"email"`
+	Password     string    `json:"password"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	WorkStart    time.Time `json:"work_start"`
+	WorkEnd      time.Time `json:"work_end"`
+	IsWorking    bool      `json:"is_working"`
+	IsOnBreak    bool      `json:"is_on_break"`
+	IsOnVacation bool      `json:"is_on_vacation"`
+	ImgUrl       string    `json:"img_url"`
+	Role		 string	   `json:"role"`
+	Position 	 string    `json:"position"`
+	CompanyID    int32     `json:"company_id"`
 }
 
-func (u *User) Create() (error, any) { 
-	client, err := db.Connect()
+func (u *User) Save() error { 
+	query := `INSERT INTO users(
+		email, password, first_name, last_name, created_at, updated_at, company_id, role, position
+	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 
-	if err != nil {
-		return err, nil
-	}
-
-	defer func() {
-	  if err = client.Disconnect(context.TODO()); err != nil {
-		panic(err)
-	  }
-	}()
-
-
-	db := client.Database("movies-app")
-
-	fmt.Println("db", db)
-	users := db.Collection("users")
-
-	var ctx, _ = context.WithTimeout(context.Background(), 100*time.Second)
-	  
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14) 
+	stmt, err := db.DB.Prepare(query)
 
 	if err != nil { 
-		return err, nil
-	}
-	  
-	result, err := users.InsertOne(ctx, User{
-		ID: primitive.NewObjectID(),
-		FirstName: u.FirstName,
-		LastName: u.LastName,
-		Email: u.Email,
-		Password: string(hashedPassword),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		IsWorking: false,
-	})
-
-	if err != nil { 
-		fmt.Println(err)
-		return err, nil
-	}
-
-	return nil, result.InsertedID
-}
-
-func (u *User) ValidateCredentials(email string, password string) error { 
-	client, err := db.Connect()
-
-	if err != nil {
 		return err
 	}
 
-	defer func() {
-	  if err = client.Disconnect(context.TODO()); err != nil {
-		panic(err)
-	  }
-	}()
+	defer stmt.Close()
 
-
-	db := client.Database("movies-app")
-
-	users := db.Collection("users")
-
-	var ctx, _ = context.WithTimeout(context.Background(), 100*time.Second)
-    filter := bson.M{"email": bson.M{"$eq": email}}
-
-	err = users.FindOne(ctx, filter).Decode(&u)
+	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil { 
-		return errors.New("new error")
+		return err
 	}
 
-	passwordIsValid := utils.CheckPasswordHash(password, u.Password)
-	fmt.Println(password, u.Password)
-	
+	_, err = stmt.Exec(
+		u.Email, hashedPassword, u.FirstName, u.LastName, time.Now(), time.Now(), u.CompanyID, u.Role, u.Position,
+	)
+	if err != nil { 
+		return err
+	}
+
+	return nil
+}
+
+
+func (u *User) ValidateCredentials() error { 
+	query := "SELECT id, password FROM users WHERE email = $1"
+
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+
+	err := row.Scan(&u.ID, &retrievedPassword)
+
+	if err != nil { 
+		return errors.New("failed to get user")
+	}
+
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
+
 	if !passwordIsValid { 
-			fmt.Println(password)
-			return errors.New("invalid credentials")
-		}
-		return nil
+		return errors.New("invalid credentials")
 	}
-		
+	return nil
+}
 
-func GetUserById(id string) (*User, error) {
-	var user User
+func AssignUserToCompany(userId, companyId string) error { 
+	query := `
+	UPDATE users 
+	SET companyId = $1
+	WHERE id = $2
+	`
 
-	client, err := db.Connect()
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-	  if err = client.Disconnect(context.TODO()); err != nil {
-		panic(err)
-	  }
-	}()
-
-
-	db := client.Database("movies-app")
-
-	users := db.Collection("users")
-
-	var ctx, _ = context.WithTimeout(context.Background(), 100*time.Second)
-	userId, err := primitive.ObjectIDFromHex(id)
+	stmt, err := db.DB.Prepare(query)
 	if err != nil { 
-		return nil, err
+		return err
 	}
-    filter := bson.M{"_id": bson.M{"$eq": userId}}
+	defer stmt.Close()
 
-	err = users.FindOne(ctx, filter).Decode(&user)
+	_, err = stmt.Exec(companyId, userId)
 
+	return err
+}
+
+func GetCompanyUsers(id int32) (*[]User, error) { 
+	query := `
+        SELECT
+            *
+        FROM
+            users
+        WHERE
+            company_id = $1
+    `
+    rows, err := db.DB.Query(query, id)
+    if err != nil {
+        return nil, fmt.Errorf("could not execute query: %v", err)
+    }
+    defer rows.Close()
+
+    var users []User
+
+    for rows.Next() {
+        var user User
+        err := rows.Scan(
+            &user.ID,
+            &user.FirstName,
+            &user.LastName,
+            &user.Email,
+            &user.Password,
+            &user.CreatedAt,
+            &user.UpdatedAt,
+            &user.IsWorking,
+            &user.WorkStart,
+            &user.WorkEnd,
+            &user.IsOnBreak,
+            &user.IsOnVacation,
+            &user.ImgUrl,
+            &user.Role,
+			&user.Position,
+            &user.CompanyID,
+        )
+        if err != nil {
+            return nil, fmt.Errorf("could not scan row: %v", err)
+        }
+        users = append(users, user)
+    }
+
+    if rows.Err() != nil {
+        return nil, fmt.Errorf("rows iteration error: %v", rows.Err())
+    }
+
+    return &users, nil
+}
+
+func GetUser(id int32) (*User, error) { 
+	query := `SELECT * FROM users WHERE id = $1`
+	row := db.DB.QueryRow(query, id)
+
+	var user User
+	err := row.Scan(
+			&user.ID,
+            &user.FirstName,
+            &user.LastName,
+            &user.Email,
+            &user.Password,
+            &user.CreatedAt,
+            &user.UpdatedAt,
+            &user.IsWorking,
+            &user.WorkStart,
+            &user.WorkEnd,
+            &user.IsOnBreak,
+            &user.IsOnVacation,
+            &user.ImgUrl,
+            &user.Role,
+			&user.Position,
+            &user.CompanyID,
+	)
 	if err != nil { 
 		return nil, err
 	}
 
 	return &user, nil
-
 }
 
 
-func AssignToCompany(companyId, userId primitive.ObjectID) error { 
-	var user User
+func (u *User) CreateEmployee() (error) { 
+	query := `INSERT INTO users(first_name, last_name, email, password, position, role, company_id, img_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	client, err := db.Connect()
+	stmt, err := db.DB.Prepare(query)
 
-	if err != nil {
+	if err != nil { 
 		return err
 	}
 
-	defer func() {
-	  if err = client.Disconnect(context.TODO()); err != nil {
-		panic(err)
-	  }
-	}()
+	defer stmt.Close()
 
-
-	db := client.Database("movies-app")
-
-	users := db.Collection("users")
-
-	var ctx, _ = context.WithTimeout(context.Background(), 100*time.Second)
-
-    filter := bson.M{"_id": bson.M{"$eq": userId}}
-	update := bson.M{
-		"$set": bson.M{"company": companyId},
-	}
-
-	err = users.FindOneAndUpdate(ctx, filter, update).Decode(&user)
-
-	return err
-
-
-
-}
-
-
-func (u *User) CreateEmployee() (error, any) {
-	client, err := db.Connect()
-
-	if err != nil {
-		return err, nil
-	}
-
-	defer func() {
-	  if err = client.Disconnect(context.TODO()); err != nil {
-		panic(err)
-	  }
-}()
-
-
-	db := client.Database("movies-app")
-	users := db.Collection("users")
-
-	var ctx, _ = context.WithTimeout(context.Background(), 100*time.Second)
-	  
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14) 
-
+	hashedPassword, err := utils.HashPassword(u.Password)
 	if err != nil { 
-		return err, nil
+		return err
 	}
-	  
 
-
-	result, err := users.InsertOne(ctx, User{
-		ID: primitive.NewObjectID(),
-		FirstName: u.FirstName,
-		LastName: u.LastName,
-		Email: u.Email,
-		Password: string(hashedPassword),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		Position: u.Position,
-		Role: u.Role,
-		Company: u.Company,
-		IsOnVacation: false,
-		IsOnBreak: false,
-		IsWorking: false,
-		ImgUrl: u.ImgUrl,
-	})
-
+	_, err = stmt.Exec(
+		u.FirstName, u.LastName, u.Email, hashedPassword, u.Position, u.Role, u.CompanyID, u.ImgUrl,
+	)
 	if err != nil { 
-		return err, nil
+		return err
 	}
 
-	return nil, result.InsertedID
+	return nil
 }

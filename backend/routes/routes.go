@@ -2,13 +2,13 @@ package routes
 
 import "github.com/gin-gonic/gin"
 
+
 func RegisterRoutes(server *gin.Engine) { 
 	server.POST("/signup", signup)
-	server.POST("/create-employee", createEmployee)
 	server.POST("/login", login)
-	server.GET("/user/:token", getUser)
-	server.GET("/user-by-id/:id", getUserById)
-	server.POST("/create-company", createCompanyAccount)
-	server.GET("/company/:token", getCompany)
-	server.GET("/employees/:token", getCompanyEmployees)
+	server.POST("/create-company", createCompany)
+	server.POST("/create-employee", createEmployeeAccount)
+	server.POST("/task", createEmployeeAccount)
+	server.GET("/employees/:companyId", getCompanyUsers)
+	server.GET("/user/:id", getUserById)
 }

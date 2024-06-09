@@ -3,32 +3,33 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"example.com/employees/models"
+	"example.com/employees/utils"
 	"github.com/gin-gonic/gin"
-	"movies.app/movies/models"
-	"movies.app/movies/utils"
 )
 
 func signup(context *gin.Context) { 
+
 	var user models.User
 
-	err := context.ShouldBindJSON(&user);
-
-	if err != nil { 
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Smth wen wrong"})
-		return
-	}
-
-	 err, id := user.Create()
-
-	if err != nil { 
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error", "error": err})
-		return
-	}
-
-
-	context.JSON(http.StatusOK, gin.H{"userId": id})
+	err := context.ShouldBindJSON(&user)
 	
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	err = user.Save()
+
+	if err != nil { 
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"user": user})
+
 }
 
 func login(context *gin.Context) { 
@@ -41,14 +42,21 @@ func login(context *gin.Context) {
 		return
 	}
 
-	err = user.ValidateCredentials(user.Email, user.Password)
+	err = user.ValidateCredentials()
 
 	if err != nil { 
 		context.JSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 		return
 	}
 
-	token, err := utils.GenerateToken(user.Email, user.ID.Hex(), user.Company.Hex())
+	dbUser, err := models.GetUser(user.ID)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	token, err := utils.GenerateToken(user.Email, user.ID, dbUser.CompanyID)
 
 	if err != nil { 
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not authenticate user"})
@@ -58,73 +66,64 @@ func login(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"message": "Logged in successfully", "token": token})
 }
 
+func getCompanyUsers(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("companyId"), 10, 64)
 
-func getUser(context *gin.Context) { 
-		token := context.Param("token")
-		if len(token) <= 0 { 
-			context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id, try again later"})
-			return
-		}
-		userId, err := utils.VerifyToken(token, "user")
+	if err != nil { 
+
+		context.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	users, err := models.GetCompanyUsers(int32(id))
+
+	if err != nil { 
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server Error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"employees": users})
 
 
-		if err != nil { 
-			context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id, try again later"})
-			return
-		}
-
-		user, err := models.GetUserById(userId)
-		
-		if err != nil { 
-			fmt.Println(err)
-			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch event, try again later", "error": err})
-			return
-		}
-	
-		context.JSON(http.StatusOK, gin.H{"user": user})
-	
 }
 
-
 func getUserById(context *gin.Context) { 
-	id := context.Param("id")
-		if len(id) <= 0 { 
-			context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id, try again later"})
-			return
-		}
-		
+	id, err := strconv.ParseInt(context.Param("id"), 10, 64)
 
+	if err != nil { 
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
 
+	user, err := models.GetUser(int32(id))
 
-		user, err := models.GetUserById(id)
-		
-		if err != nil { 
-			fmt.Println(err)
-			context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch event, try again later", "error": err})
-			return
-		}
-	
-		context.JSON(http.StatusOK, gin.H{"user": user})
-} 
+	if err != nil { 
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server Error"})
+		return
+	}
 
-func createEmployee(context *gin.Context) { 
+	context.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+func createEmployeeAccount(context *gin.Context) { 
 	var user models.User
 
-	err := context.ShouldBindJSON(&user);
+	err := context.ShouldBindJSON(&user)
 
 	if err != nil { 
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Smth wen wrong"})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
 		return
 	}
 
-	 err, id := user.CreateEmployee()
+	err = user.CreateEmployee()	
 
 	if err != nil { 
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error", "error": err})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 		return
 	}
 
-
-	context.JSON(http.StatusOK, gin.H{"userId": id})
-	
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully created employee"})
 }

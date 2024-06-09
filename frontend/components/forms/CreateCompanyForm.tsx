@@ -14,27 +14,44 @@ const CreateCompanyForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const userId = searchParams.get('userId');
+  const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  if (!userId) {
-    router.push('/sign-up');
-  }
+  const handleCreateCompany = async () => {
+    try {
+      setIsCreating(true);
 
-  const { mutate: createCompanyMutation } = useMutation({
-    mutationKey: ['createCompany'],
-    mutationFn: createCompany,
-    onSuccess: () => {
+      const res = await createCompany({ name, email, logoUrl: '' });
+      router.push(`/sign-up?companyId=${res.companyId}`);
+
       toast({
         title: 'Created',
         duration: 1500,
       });
-    },
-    onError: () => {
+    } catch (error) {
       toast({
         title: 'Failed to create company',
         duration: 1500,
       });
-    },
-  });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+  // const { mutate: createCompanyMutation } = useMutation({
+  //   mutationKey: ['createCompany'],
+  //   mutationFn: createCompany,
+  //   onSuccess: () => {
+  //     toast({
+  //       title: 'Created',
+  //       duration: 1500,
+  //     });
+  //   },
+  //   onError: () => {
+  //     toast({
+  //       title: 'Failed to create company',
+  //       duration: 1500,
+  //     });
+  //   },
+  // });
   return (
     <div className='flex items-start w-full h-screen'>
       <div className='w-[70%] flex flex-col h-full items-start justify-between bg-[url(https://imgs.search.brave.com/7T0f7PsSJoQVw3vp0JBkIuDkaLwY6drSPHjce-k0fzQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTY3/ODE0NDIzNy9waG90/by9jZWxlYnJhdGlv/bi1idXNpbmVzcy1t/ZWV0aW5nLWFuZC1o/aWdoLWZpdmUtb2Yt/Y29tcGFueS1zdGFm/Zi13aXRoLWNvbGxh/Ym9yYXRpb24tYW5k/LXRlYW13b3JrLndl/YnA_Yj0xJnM9MTcw/NjY3YSZ3PTAmaz0y/MCZjPXVremhhNUxj/MndvR2x2Q0llVm0w/em4wbDBSUy12QklJ/a0RoREs1cmM2RnM9)] bg-no-repeat bg-cover'>
@@ -52,18 +69,7 @@ const CreateCompanyForm = () => {
           <Label>Email</Label>
           <Input onChange={(e) => setEmail(e.target.value)} />
         </div>
-        <Button
-          onClick={() =>
-            createCompanyMutation({
-              name,
-              email,
-              logoUrl: '',
-              users: [userId!],
-            })
-          }
-        >
-          Create Company
-        </Button>
+        <Button onClick={() => handleCreateCompany()}>Create Company</Button>
       </div>
     </div>
   );
