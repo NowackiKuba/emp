@@ -23,10 +23,9 @@ const SignInForm = () => {
         description: 'Your account has been created successfully',
         duration: 1500,
       });
-
-      router.push('/sign-in');
     },
-    onError: () => {
+    onError: ({ message, name, cause, stack }) => {
+      console.log(message, name, cause, stack);
       toast({
         title: 'Error',
         description: 'An error occurred while creating your account',
@@ -50,12 +49,11 @@ const SignInForm = () => {
         <div className='flex flex-col gap-3 w-full'>
           <Button
             disabled={isLogging}
-            onClick={() => {
-              const res = logIn({
+            onClick={async () => {
+              await logIn({
                 email,
                 password,
               });
-              console.log('RES: ', res);
             }}
           >
             {isLogging ? (

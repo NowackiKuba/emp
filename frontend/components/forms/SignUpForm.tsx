@@ -8,7 +8,11 @@ import { useMutation } from '@tanstack/react-query';
 import { createAccount } from '@/actions/auth.actions';
 import { toast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar } from '../ui/calendar';
 
 const SignUpForm = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -16,27 +20,60 @@ const SignUpForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const router = useRouter();
-  const { mutate: signup, isPending: isSignin } = useMutation({
-    mutationKey: ['signup'],
-    mutationFn: createAccount,
-    onSuccess: () => {
+  const [isSignin, setIsSigning] = useState(false);
+
+  const signup = async () => {
+    try {
+      setIsSigning(true);
+      const res = await createAccount({
+        email,
+        firstName,
+        lastName,
+        password,
+      });
+      console.log(res);
       toast({
-        title: 'Account Created',
+        title: 'Successfully created account',
         description: 'Your account has been created successfully',
         duration: 1500,
       });
-
-      router.push('/sign-in');
-    },
-    onError: () => {
+      const userId = await res.userId;
+      router.push(`/create-company/?userId=${userId}`);
+    } catch (error) {
       toast({
         title: 'Error',
         description: 'An error occurred while creating your account',
         duration: 1500,
         variant: 'destructive',
       });
-    },
-  });
+      console.log(error);
+    } finally {
+      setIsSigning(false);
+    }
+  };
+  // const { mutate: signup, isPending: isSignin } = useMutation({
+  //   mutationKey: ['signup'],
+  //   mutationFn: createAccount,
+  //   onSuccess: () => {
+  //     toast({
+  //       title: 'Account Created',
+  //       description: 'Your account has been created successfully',
+  //       duration: 1500,
+  //     });
+
+  //     // router.push(`/create-company/${data._id}`);
+  //   },
+  //   onError: ({ message }) => {
+  //     console.log(message);
+  //     toast({
+  //       title: 'Error',
+  //       description: 'An error occurred while creating your account',
+  //       duration: 1500,
+  //       variant: 'destructive',
+  //     });
+  //   },
+  // });
+  // console.log(data);
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   const generateUsername = () => {
     let username = '';
@@ -60,6 +97,7 @@ const SignUpForm = () => {
             <Input onChange={(e) => setLastName(e.target.value)} />
           </div>
         </div>
+
         <div className='flex flex-col gap-0.5 w-full'>
           <Label>Email</Label>
           <Input onChange={(e) => setEmail(e.target.value)} />
@@ -72,12 +110,7 @@ const SignUpForm = () => {
           <Button
             disabled={isSignin}
             onClick={() => {
-              signup({
-                firstName,
-                lastName,
-                email,
-                username: generateUsername(),
-              });
+              signup();
             }}
           >
             {isSignin ? (

@@ -6,23 +6,26 @@ import { cookies } from 'next/headers';
 export const createAccount = async ({
   firstName,
   lastName,
-  username,
   email,
+  password,
 }: {
   firstName: string;
   lastName: string;
-  username: string;
   email: string;
+  password: string;
 }) => {
   const res = await axios('http://localhost:8080/signup', {
     method: 'POST',
     data: {
       firstName,
       lastName,
-      username,
       email,
+      password,
+      role: 'ADMIN',
     },
   });
+
+  return res.data;
 };
 
 export const login = async ({
@@ -32,17 +35,52 @@ export const login = async ({
   email: string;
   password: string;
 }) => {
-  const res = await axios('http://localhost:8080/login', {
-    method: 'POST',
-    data: {
-      email,
-      password,
-    },
+  const res = await axios.post('http://localhost:8080/login', {
+    email,
+    password,
   });
 
-  const token = cookies().set('token', res.data.token, {
-    maxAge: 60 * 60 * 24 * 7,
+  if (res) {
+    const token = cookies().set('token', res.data.token, {
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return res.data.user;
+  }
+
+  return null;
+};
+
+export const createCompany = async ({
+  name,
+  email,
+  logoUrl,
+  users,
+}: {
+  name: string;
+  email: string;
+  logoUrl: string;
+  users: string[];
+}) => {
+  const res = await axios.post('http://localhost:8080/create-company', {
+    name,
+    email,
+    logoUrl,
+    users,
   });
 
-  return token;
+  return res;
+};
+
+export const getTokenValues = async () => {
+  const token = cookies().get('token');
+
+  const secretKey = 'supersecert';
+
+  const decoded = jwt.verify(token?.value!, secretKey);
+
+  // @ts-ignore
+  const { userId, companyId, email } = decoded;
+
+  return { userId, companyId, email };
 };

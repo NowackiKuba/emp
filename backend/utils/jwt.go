@@ -9,17 +9,18 @@ import (
 
 const secretKey = "supersecert"
 
-func GenerateToken(email string, userId string) (string, error) { 
+func GenerateToken(email, userId, companyId string) (string, error) { 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": email,
 		"userId": userId,
+		"companyId": companyId,
 		"exp": time.Now().Add(time.Hour * 2).Unix(),
 	})
 
 	return token.SignedString([]byte(secretKey))
 }
 
-func VerifyToken(token string) (string, error) { 
+func VerifyToken(token, returnType string) (string, error) { 
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok { 
@@ -44,7 +45,19 @@ func VerifyToken(token string) (string, error) {
 	}
 
 	// userId := strconv(claims["userId"].(float64))
-	userId := string(claims["userId"].(string))
+	switch(returnType) {
+	case "user": 
+		userId := string(claims["userId"].(string))
+		
+		return userId, nil
+	case "company":
+		companyId := string(claims["companyId"].(string))
+		
+		return companyId, nil
+	default:
+		userId := string(claims["userId"].(string))
+		
+		return userId, nil
+	}
 
-	return userId, nil
 }
