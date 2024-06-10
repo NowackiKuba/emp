@@ -99,7 +99,7 @@ const Employees = () => {
           </TableHeader>
           <TableBody>
             {employees?.map((employee) => (
-              <TableRow key={employee._id}>
+              <TableRow key={employee.id}>
                 <TableCell>
                   <Avatar className='h-16 w-16 rounded-md'>
                     <AvatarImage

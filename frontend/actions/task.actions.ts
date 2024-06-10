@@ -14,7 +14,7 @@ export const createTask = async ({
   description: string;
   deadline: Date;
   priority: number;
-  assignedTo: string;
+  assignedTo: number;
 }) => {
   const { userId, companyId } = await getTokenValues();
 
@@ -24,7 +24,7 @@ export const createTask = async ({
       title,
       description,
       deadline,
-      priority,
+      priority: +priority,
       assigned_to_id: assignedTo,
       assigned_by_id: userId,
       company_id: companyId,
@@ -37,9 +37,52 @@ export const createTask = async ({
 export const getCompanyTasks = async (): Promise<TTask[]> => {
   const { companyId } = await getTokenValues();
 
-  const res = await axios(`http://localhost:8080/company-tasks/${companyId}`, {
+  const res = await axios(`http://localhost:8080/tasks/${companyId}`, {
     method: 'GET',
   });
 
   return res.data.tasks;
+};
+
+export const getTaskById = async (taskId: number): Promise<TTask> => {
+  const res = await axios(`http://localhost:8080/task/${taskId}`, {
+    method: 'GET',
+  });
+
+  return res.data.task;
+};
+
+export const updateTask = async ({
+  title,
+  description,
+  deadline,
+  priority,
+  assignedTo,
+  assignedBy,
+  status,
+  id,
+}: {
+  title: string;
+  description: string;
+  deadline: Date;
+  priority: number;
+  assignedTo: number;
+  assignedBy: number;
+  status?: string;
+  id: number;
+}) => {
+  const res = axios(`http://localhost:8080/task/${id}`, {
+    method: 'PATCH',
+    data: {
+      title,
+      description,
+      deadline,
+      priority,
+      assigned_to_id: assignedTo,
+      assigned_by_id: assignedBy,
+      status,
+    },
+  });
+
+  return res;
 };

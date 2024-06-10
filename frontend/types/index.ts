@@ -6,7 +6,7 @@ type TDialogProps = DialogProps;
 type TTask = Task;
 
 interface User {
-  _id: string;
+  id: number;
   first_name: string;
   last_name: string;
   email: string;
@@ -61,15 +61,17 @@ interface DialogProps {
 }
 
 interface Task {
-  _id: string;
+  id: number;
   title: string;
   description: string;
   priority: number;
-  assignedBy: User;
-  assignedTo: User;
+  assigned_by_id: number;
+  assigned_to_id: number;
+  assigned_by: User;
+  assigned_to: User;
   deadline: Date;
-  companyId: string;
+  company_id: string;
   status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }

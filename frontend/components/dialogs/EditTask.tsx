@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -19,30 +19,47 @@ import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar } from '../ui/calendar';
 import { useMutation } from '@tanstack/react-query';
-import { createTask } from '@/actions/task.actions';
+import { createTask, updateTask } from '@/actions/task.actions';
 import { toast } from '../ui/use-toast';
 
-const CreateTask = ({ open, setOpen }: TDialogProps) => {
+interface Props extends DialogProps {
+  task: TTask;
+}
+
+const EditTask = ({ open, setOpen, task }: Props) => {
   const { employees } = useCompanyEmployees();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [priority, setPriority] = useState<number>(0);
   const [deadline, setDeadline] = useState<Date>();
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number>(0);
+  const [status, setStatus] = useState<string>('');
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number>();
 
-  const { mutate: createTaskMutation, isPending: isCreating } = useMutation({
-    mutationKey: ['createTask'],
-    mutationFn: createTask,
+  useEffect(() => {
+    if (!task) {
+      return;
+    }
+    setTitle(task.title);
+    setDescription(task.description);
+    setPriority(task.priority);
+    setDeadline(task.deadline);
+    setSelectedEmployeeId(task.assigned_to.id);
+    setStatus(task.status);
+  }, [task]);
+
+  const { mutate: editTask, isPending: isEditing } = useMutation({
+    mutationKey: ['editTask'],
+    mutationFn: updateTask,
     onSuccess: () => {
       toast({
-        title: 'Task Created',
+        title: 'Task Edited',
         duration: 1500,
       });
       setOpen(false);
     },
     onError: () => {
       toast({
-        title: 'Failed to create task',
+        title: 'Failed to edit task',
         duration: 1500,
         variant: 'destructive',
         description: 'Please try again later',
@@ -62,7 +79,10 @@ const CreateTask = ({ open, setOpen }: TDialogProps) => {
         <p className='text-xl font-semibold'>Create Task</p>
         <div className='flex flex-col gap-0.5 w-full'>
           <Label>Title</Label>
-          <Input onChange={(e) => setTitle(e.target.value)} />
+          <Input
+            onChange={(e) => setTitle(e.target.value)}
+            defaultValue={title}
+          />
         </div>
 
         <div className='flex flex-col gap-0.5 w-full'>
@@ -71,12 +91,13 @@ const CreateTask = ({ open, setOpen }: TDialogProps) => {
             onChange={(e) => setDescription(e.target.value)}
             className='resize-none'
             rows={5}
+            defaultValue={description}
           />
         </div>
         <div className='flex flex-col gap-0.5 w-full'>
           <Label>Assign To</Label>
           <Select
-            defaultValue={selectedEmployeeId.toString()}
+            defaultValue={selectedEmployeeId?.toString()}
             onValueChange={(e) => setSelectedEmployeeId(+e)}
           >
             <SelectTrigger>
@@ -132,35 +153,54 @@ const CreateTask = ({ open, setOpen }: TDialogProps) => {
             </PopoverContent>
           </Popover>
         </div>
+        <div className='flex flex-col gap-0.5 w-full'>
+          <Label>Status</Label>
+          <Select
+            defaultValue={status}
+            onValueChange={(e) => setStatus(e.toUpperCase())}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder='Select Status' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={'ASSIGNED'}>Assigned</SelectItem>
+              <SelectItem value={'IN_PROGRESS'}>In Progress</SelectItem>
+              <SelectItem value={'COMPLETED'}>Completed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div className='flex items-center gap-2'>
           <Button
             className='w-full'
             variant={'p-outline'}
             onClick={() => setOpen(false)}
-            disabled={isCreating}
+            disabled={isEditing}
           >
             Anuluj
           </Button>
           <Button
             className='w-full'
-            disabled={isCreating}
+            disabled={isEditing}
             onClick={() => {
-              createTaskMutation({
-                assignedTo: selectedEmployeeId,
+              editTask({
+                assignedTo: selectedEmployeeId!,
                 deadline: deadline!,
                 description,
                 priority,
                 title,
+                assignedBy: task.assigned_by.id,
+                id: task.id,
+                status,
               });
             }}
           >
-            {isCreating ? (
+            {isEditing ? (
               <div className='flex items-center gap-1'>
                 <Loader2 className='h-4 w-4 animate-spin' />
-                <p>Create</p>
+                <p>Edit</p>
               </div>
             ) : (
-              'Create'
+              'Edit'
             )}
           </Button>
         </div>
@@ -169,4 +209,4 @@ const CreateTask = ({ open, setOpen }: TDialogProps) => {
   );
 };
 
-export default CreateTask;
+export default EditTask;

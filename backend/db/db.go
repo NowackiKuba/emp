@@ -85,8 +85,8 @@ func CreateTables(DB *sql.DB) {
 		assigned_by_id INT NOT NULL,
 		assigned_to_id INT NOT NULL,
 		FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE,
-		FOREIGN KEY (assigned_by_id) REFERENCES users (id) ON DELETE CASCADE,
-		FOREIGN KEY (assigned_to_id) REFERENCES users (id) ON DELETE CASCADE
+		FOREIGN KEY (assigned_by_id) REFERENCES users (id) ON DELETE SET NULL,
+		FOREIGN KEY (assigned_to_id) REFERENCES users (id) ON DELETE SET NULL
 	)`
 
 	_, err = DB.Exec(createTasksTable)
