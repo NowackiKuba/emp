@@ -4,6 +4,8 @@ type TMovie = Movie;
 type TCompany = Company;
 type TDialogProps = DialogProps;
 type TTask = Task;
+type TPoll = Poll;
+type TAnswer = Answer;
 
 interface User {
   id: number;
@@ -74,4 +76,29 @@ interface Task {
   status: string;
   created_at: Date;
   updated_at: Date;
+}
+
+interface Poll {
+  id: number;
+  title: string;
+  description: string;
+  created_at: Date;
+  updated_at: Date;
+  starts_on: Date;
+  ends_on: Date;
+  questions: string[];
+  created_by_id: number;
+  created_by: User;
+  company: Company;
+  company_id: number;
+  answered_by_users: User;
+  answered_by: number[];
+}
+
+interface Answer {
+  id: number;
+  poll_id: number;
+  answered_by_id: number;
+  poll: Poll;
+  answered_by: User;
 }

@@ -1,7 +1,15 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { CirclePlus, Settings } from 'lucide-react';
+import {
+  CircleCheck,
+  CirclePlus,
+  Edit,
+  Eye,
+  FileQuestion,
+  Settings,
+  Trash,
+} from 'lucide-react';
 import CreateEmployee from '../dialogs/CreateEmployee';
 import {
   Table,
@@ -23,6 +31,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
@@ -132,9 +147,36 @@ const Employees = () => {
                     : 'Not working'}
                 </TableCell>
                 <TableCell className='flex justify-end items-end'>
-                  <Button variant={'ghost'} size={'icon'}>
-                    <Settings />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant={'ghost'} size={'icon'}>
+                        <Settings />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                        <Eye className='h-4 w-4' />
+                        <p>See Details</p>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                        <Edit className='h-4 w-4' />
+                        <p>Edit Employee</p>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                        <CircleCheck className='h-4 w-4' />
+                        <p>Assign Task</p>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                        <FileQuestion className='h-4 w-4' />
+                        <p>Ask Question</p>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer text-red-500'>
+                        <Trash className='h-4 w-4' />
+                        <p>Ask Question</p>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

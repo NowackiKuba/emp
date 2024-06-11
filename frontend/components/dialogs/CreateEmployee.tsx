@@ -88,8 +88,9 @@ const CreateEmployee = ({
                 },
               }}
               appearance={{
+                button: 'hidden',
                 container:
-                  'w-full flex flex-col items-center justify-center gap-2',
+                  'w-full flex flex-col items-center justify-center gap-2 py-6',
               }}
             />
           ) : (

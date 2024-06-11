@@ -43,7 +43,7 @@ export const login = async ({
 
   if (res) {
     const token = cookies().set('token', res.data.token, {
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24 * 7 * 3600,
     });
 
     return res.data.user;

@@ -94,4 +94,40 @@ func CreateTables(DB *sql.DB) {
 		fmt.Println(err)
 		panic("Could not create tasks table")
 	}
+	createPollsTable := `CREATE TABLE IF NOT EXISTS polls (
+		id SERIAL PRIMARY KEY,
+		title TEXT NOT NULL,
+		description TEXT NOT NULL,
+		created_at TIMESTAMP DEFAULT NOW(),
+		updated_at TIMESTAMP DEFAULT NOW(),
+		starts_on TIMESTAMP DEFAULT NOW(),
+		ends_on TIMESTAMP DEFAULT NOW(),
+		questions TEXT[] DEFAULT '{}',
+		created_by INT NOT NULL,
+		company_id INT NOT NULL,
+		FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL,
+		FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE
+	)`
+
+	_, err = DB.Exec(createPollsTable)
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create polls table")
+	}
+	createAnswersTable := `CREATE TABLE IF NOT EXISTS answers (
+		id SERIAL PRIMARY KEY,
+		answered_by_id INT NOT NULL,
+		created_at TIMESTAMP DEFAULT NOW(),
+		updated_at TIMESTAMP DEFAULT NOW(),
+		poll_id INT NOT NULL,
+		answer TEXT NOT NULL,
+		FOREIGN KEY (answered_by_id) REFERENCES users (id) ON DELETE SET NULL,
+		FOREIGN KEY (poll_id) REFERENCES polls (id) ON DELETE CASCADE
+	)`
+
+	_, err = DB.Exec(createAnswersTable)
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create polls table")
+	}
 }

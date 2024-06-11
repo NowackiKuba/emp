@@ -55,7 +55,7 @@ const Searchbar = ({
 
   return (
     <div
-      className={`dark:bg-gray-900 bg-gray-100 w-full  relative flex min-h-[44px] grow items-center gap-1 rounded-xl px-4 ${otherClasses}`}
+      className={`bg-secondary w-full  relative flex min-h-[44px] grow items-center gap-1 rounded-xl px-4 ${otherClasses}`}
     >
       {iconPosition === 'left' && <Search />}
       <Input

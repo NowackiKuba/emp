@@ -84,5 +84,5 @@ export const updateTask = async ({
     },
   });
 
-  return res;
+  return;
 };

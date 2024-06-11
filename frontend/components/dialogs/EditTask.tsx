@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar } from '../ui/calendar';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createTask, updateTask } from '@/actions/task.actions';
 import { toast } from '../ui/use-toast';
 
@@ -46,7 +46,7 @@ const EditTask = ({ open, setOpen, task }: Props) => {
     setSelectedEmployeeId(task.assigned_to.id);
     setStatus(task.status);
   }, [task]);
-
+  const queryClient = useQueryClient();
   const { mutate: editTask, isPending: isEditing } = useMutation({
     mutationKey: ['editTask'],
     mutationFn: updateTask,
@@ -56,6 +56,10 @@ const EditTask = ({ open, setOpen, task }: Props) => {
         duration: 1500,
       });
       setOpen(false);
+      queryClient.invalidateQueries({
+        queryKey: ['getCompanyTasks'],
+        refetchType: 'all',
+      });
     },
     onError: () => {
       toast({

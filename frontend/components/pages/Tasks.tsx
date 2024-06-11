@@ -37,7 +37,6 @@ const Tasks = () => {
   if (isLoading) {
     return <p>....loading</p>;
   }
-  console.log(tasks);
   return (
     <div className='w-full flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
