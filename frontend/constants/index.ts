@@ -4,6 +4,7 @@ import {
   CircleCheck,
   FileText,
   Home,
+  NotepadText,
   Star,
   Users,
 } from 'lucide-react';
@@ -13,7 +14,7 @@ export const navLinks = [
   { id: 2, name: 'Employees', href: '/employees', icon: Users },
   { id: 6, name: 'Polls', href: '/polls', icon: BarChart },
   { id: 3, name: 'Tasks', href: '/tasks', icon: CircleCheck },
-  { id: 4, name: 'Opinions', href: '/opinions', icon: Star },
+  { id: 4, name: 'Surveys', href: '/surveys', icon: NotepadText },
   { id: 5, name: 'Analytics', href: '/analytics', icon: BarChart4 },
   { id: 7, name: "PTO's", href: '/pto', icon: FileText },
 ];

@@ -69,4 +69,11 @@ func updatePTO(context *gin.Context) {
 	updatedPTO.ID = int32(id)
 
 	err = updatedPTO.Update()
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Sucessfully updated pto"})
 }

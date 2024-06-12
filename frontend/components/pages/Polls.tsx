@@ -9,6 +9,7 @@ import PollCard from '../cards/PollCard';
 const Polls = () => {
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
   const { polls, isLoading } = usePolls();
+
   return (
     <div className='flex flex-col gap-4 w-full'>
       <div className='flex items-center justify-between w-full'>

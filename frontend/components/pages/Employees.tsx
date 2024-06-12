@@ -39,6 +39,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import CreateTask from '../dialogs/CreateTask';
+import { format } from 'date-fns';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
@@ -141,13 +142,17 @@ const Employees = () => {
                   {employee.role.toLowerCase()}
                 </TableCell>
                 <TableCell>
-                  {employee?.is_working
-                    ? 'Working'
-                    : employee?.is_on_vacation
-                    ? 'Vacation'
-                    : employee?.is_on_break
-                    ? 'break'
-                    : 'Not working'}
+                  {employee?.is_working ? (
+                    <div className='px-1 py-0.5 bg-green-500 text-white rounded-sm max-w-[100px] flex items-center justify-center text-xs font-semibold'>
+                      Working: {format(employee?.work_start, 'HH:mm')}
+                    </div>
+                  ) : employee?.is_on_vacation ? (
+                    'Vacation'
+                  ) : employee?.is_on_break ? (
+                    'break'
+                  ) : (
+                    'Not working'
+                  )}
                 </TableCell>
                 <TableCell className='flex justify-end items-end'>
                   <DropdownMenu>

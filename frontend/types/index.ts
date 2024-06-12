@@ -7,6 +7,9 @@ type TTask = Task;
 type TPoll = Poll;
 type TAnswer = Answer;
 type TPTO = PTO;
+type TSurvey = Survey;
+type TQuestion = SurveyQuestion;
+
 interface User {
   id: number;
   first_name: string;
@@ -119,4 +122,27 @@ interface PTO {
   accepted: boolean;
   start_date: Date;
   end_date: Date;
+}
+
+interface Survey {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  title: string;
+  created_by_id: number;
+  created_by: User;
+  company_id: number;
+  start_date: Date;
+  end_date: Date;
+}
+
+interface SurveyQuestion {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  title: string;
+  type: string;
+  answers: string[];
+  survey_id: number;
+  input_type: string;
 }

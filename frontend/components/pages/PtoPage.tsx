@@ -8,6 +8,12 @@ import { getCompanyPtos } from '@/actions/pto.actions';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { format } from 'date-fns';
 import PTODetails from '../dialogs/PTODetails';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 const PtoPage = () => {
   const { data: ptos, isLoading } = useQuery({
@@ -19,8 +25,8 @@ const PtoPage = () => {
   const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false);
   const [selectedRequest, setSelectedRequest] = useState<TPTO>();
   const [statusFilter, setStatusFilter] = useState<
-    'all' | 'rejected' | 'accepted'
-  >('all');
+    'assigned' | 'rejected' | 'accepted'
+  >('assigned');
   return (
     <div className='flex flex-col gap-4 w-full'>
       <div className='flex items-center justify-between'>
@@ -35,10 +41,10 @@ const PtoPage = () => {
       </div>
       <div className='flex items-center gap-2'>
         <Button
-          variant={statusFilter === 'all' ? 'default' : 'p-outline'}
-          onClick={() => setStatusFilter('all')}
+          variant={statusFilter === 'assigned' ? 'default' : 'p-outline'}
+          onClick={() => setStatusFilter('assigned')}
         >
-          All
+          Assigned
         </Button>
         <Button
           variant={statusFilter === 'rejected' ? 'default' : 'p-outline'}
@@ -57,7 +63,21 @@ const PtoPage = () => {
         {ptos?.map((pto) => (
           <div
             key={pto.id}
-            className='h-80 w-80 rounded-xl bg-secondary px-4 py-2 flex flex-col gap-1'
+            className={`${
+              statusFilter === 'assigned'
+                ? pto.status === 'ASSIGNED'
+                  ? 'flex'
+                  : 'hidden'
+                : statusFilter === 'rejected'
+                ? pto.status === 'REJECTED'
+                  ? 'flex'
+                  : 'hidden'
+                : statusFilter === 'accepted'
+                ? pto.status === 'ACCEPTED'
+                  ? 'flex'
+                  : 'hidden'
+                : 'flex'
+            } h-80 w-80 rounded-xl bg-secondary px-4 py-2 flex flex-col gap-1`}
           >
             <div className='flex items-center gap-2'>
               <Avatar className='h-16 w-16 rounded-xl'>
@@ -87,12 +107,27 @@ const PtoPage = () => {
             </p>
             <p className='text-gray-400'>
               Status:{' '}
-              <span className='font-semibold first-letter:uppercase'>
+              <span
+                className={`font-semibold first-letter:uppercase ${
+                  pto?.status.toLowerCase() === 'accepted'
+                    ? 'text-green-500'
+                    : pto?.status?.toLowerCase() === 'rejeceted'
+                    ? 'text-red-500'
+                    : 'text-gray-400'
+                }`}
+              >
                 {pto.status.toLowerCase()}
               </span>
             </p>
             <div className='flex items-start gap-1'>
-              <Bot className='w-20' />
+              <TooltipProvider>
+                <Tooltip delayDuration={20}>
+                  <TooltipTrigger className='w-20'>
+                    <Bot />
+                  </TooltipTrigger>
+                  <TooltipContent>AI Manager</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <p className='italic text-gray-400'>
                 In this date range none of employees have their ptos. You can
                 grant this employee his pto
