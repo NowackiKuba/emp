@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 const Navbar = () => {
   const { user, isLoading } = useUser();
   const pathname = usePathname();
+  const employeeToShow = ['Home', 'Tasks', 'Polls', 'Opinions', "PTO's"];
   return (
     <div className='bg-background w-full px-12 py-4 flex items-center justify-between'>
       <div>asd</div>
@@ -23,7 +24,13 @@ const Navbar = () => {
                 pathname === link.href
                   ? 'bg-primary text-white '
                   : 'hover:bg-primary/10 hover:text-primary duration-100 ease-linear'
-              }`}
+              } ${
+                user?.role.toLowerCase() === 'employee'
+                  ? employeeToShow.includes(link.name)
+                    ? 'flex'
+                    : 'hidden'
+                  : 'flex'
+              } `}
             >
               <Icon />
               <p>{link.name}</p>

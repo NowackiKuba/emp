@@ -20,7 +20,7 @@ const TaskDetails = ({ open, setOpen, task }: Props) => {
         }
       }}
     >
-      <DialogContent className='flex flex-col gap-4 w-full'>
+      <DialogContent className='flex flex-col gap-4 w-full max-w-2xl'>
         <div className='flex items-start gap-2'>
           <div
             className={`${bg} flex items-center justify-center h-24 w-24 rounded-xl`}

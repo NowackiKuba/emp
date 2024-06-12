@@ -53,3 +53,23 @@ export const getPollAnswers = async ({
 
   return res.data.answers;
 };
+
+export const answerPoll = async ({
+  pollId,
+  answer,
+}: {
+  pollId: number;
+  answer: string;
+}) => {
+  const { userId } = await getTokenValues();
+  const res = await axios(`http://localhost:8080/answer`, {
+    method: 'POST',
+    data: {
+      poll_id: pollId,
+      answered_by_id: userId,
+      answer,
+    },
+  });
+
+  return;
+};

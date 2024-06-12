@@ -63,6 +63,7 @@ export const getPriorityProps = (priority: number) => {
         text: 'High',
         icon: FcHighPriority,
       };
+      break;
     case 1:
       return {
         textColor: 'text-yellow-500 dark:text-yellow-200',
@@ -70,6 +71,7 @@ export const getPriorityProps = (priority: number) => {
         text: 'Medium',
         icon: FcMediumPriority,
       };
+      break;
     case 0:
       return {
         textColor: 'text-green-500 dark:text-green-200',
@@ -77,6 +79,7 @@ export const getPriorityProps = (priority: number) => {
         text: 'Low',
         icon: FcLowPriority,
       };
+      break;
     default:
       return {
         textColor: 'text-gray-500 dark:text-gray-200',
@@ -85,4 +88,23 @@ export const getPriorityProps = (priority: number) => {
         icon: FcLowPriority,
       };
   }
+};
+
+interface DataProps {
+  name: string;
+  answers: number;
+}
+
+export const getPollChartData = (answers: TAnswer[]) => {
+  const data: DataProps[] = [];
+
+  answers.forEach((a) => {
+    if (data.some((d) => d.name === a.answer)) {
+      data.find((d) => d.name === a.answer)!.answers += 1;
+    } else {
+      data.push({ name: a.answer, answers: 1 });
+    }
+  });
+
+  return data;
 };

@@ -20,6 +20,22 @@ type Answer struct {
 	Answer string `json:"answer"`
 }
 
+func (a *Answer) Create() error { 
+	query := "INSERT INTO answers(answered_by_id, created_at, updated_at, poll_id, answer) VALUES ($1, $2, $3, $4, $5)"
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil { 
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(a.AnsweredById, time.Now(), time.Now(), a.PollId, a.Answer)
+
+	return err
+}
+
 func GetPollAnswers(id int32) (*[]Answer, error) { 
 	query := `SELECT a.*, p.* AS poll, u.* AS user FROM answers a LEFT JOIN polls p ON a.poll_id = p.id LEFT JOIN users u ON a.answered_by_id = u.id WHERE a.poll_id = $1`
 

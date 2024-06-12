@@ -203,3 +203,19 @@ func (u *User) CreateEmployee() (error) {
 
 	return nil
 }
+
+func StartWork(id int32) error { 
+	query := `UPDATE users SET is_working = $1, work_start = $2 WHERE id = $3`
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil { 
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(true, time.Now(), id)
+
+	return err
+}

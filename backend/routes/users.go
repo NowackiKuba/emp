@@ -127,3 +127,21 @@ func createEmployeeAccount(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "Successfully created employee"})
 }
+
+func startWork(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("userId"), 10, 64)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	err = models.StartWork(int32(id))
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Work Started"})
+}

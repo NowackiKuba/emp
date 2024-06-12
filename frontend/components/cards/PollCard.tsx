@@ -1,3 +1,4 @@
+'use client';
 import { format } from 'date-fns';
 import { BarChart, Eye } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -6,8 +7,14 @@ import { Button } from '../ui/button';
 import { getTokenValues } from '@/actions/auth.actions';
 import AnswerPollDialog from '../dialogs/AnswerPollDialog';
 import PollInsightsDialog from '../dialogs/PollInsightsDialog';
+import { useQuery } from '@tanstack/react-query';
+import { getPollAnswers } from '@/actions/poll.actions';
 
 const PollCard = ({ poll }: { poll: TPoll }) => {
+  const { data: answers, isLoading } = useQuery({
+    queryKey: ['getPollAnswers', poll.id],
+    queryFn: async () => await getPollAnswers({ pollId: poll.id }),
+  });
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isOpenAnswer, setIsOpenAnswer] = useState<boolean>(false);
   const [isOpenInsights, setIsOpenInsights] = useState<boolean>(false);
@@ -49,8 +56,44 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
           </div>
         </div>
       </div>
-      <p>Starts: {format(poll?.starts_on || new Date(), 'dd.MM.yyyy')}</p>
-      <p>Ends: {format(poll?.ends_on || new Date(), 'dd.MM.yyyy')}</p>
+      <p className='text-[15px] text-gray-400 dark:text-gray-200'>
+        Starts:{' '}
+        <span className='font-[600]'>
+          {format(poll?.starts_on || new Date(), 'dd.MM.yyyy')}
+        </span>
+      </p>
+      <p className='text-[15px] text-gray-400 dark:text-gray-200'>
+        Ends:{' '}
+        <span className='font-[600]'>
+          {format(poll?.ends_on || new Date(), 'dd.MM.yyyy')}
+        </span>
+      </p>
+      <div className='flex items-center gap-1 mt-4'>
+        {answers?.map((a, i) => (
+          <>
+            <Avatar
+              style={{ marginLeft: `${15 * i}px` }}
+              className={`h-8 w-8  ${i + 1 > 3 ? 'hidden' : 'absolute'}`}
+              key={a.id}
+            >
+              <AvatarImage src={a?.answered_by?.img_url} />
+              <AvatarFallback className='h-8 w-8'>
+                <div className='flex items-center justify-center h-8 w-8 rounded-full text-sm font-semibold bg-primary/10 text-primary dark:bg-red-500/20 dark:text-red-200'>
+                  {a?.answered_by.first_name[0]}
+                  {a?.answered_by.last_name[0]}
+                </div>
+              </AvatarFallback>
+            </Avatar>
+          </>
+        ))}
+        {answers && answers?.length > 3 ? (
+          <p className='text-xs text-gray-400 ml-16'>
+            +{answers?.length - 3} more already answered{' '}
+          </p>
+        ) : (
+          <p className='text-xs text-gray-400 ml-16'>Already answered</p>
+        )}
+      </div>
       <div className='flex flex-col items-end justify-end h-full w-full'>
         {poll.created_by_id === currentUserId ? (
           <Button
@@ -67,11 +110,17 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
             className='flex items-center gap-2 w-full'
             variant={'p-outline'}
             disabled={
-              !currentUserId || poll?.answered_by?.includes(currentUserId)
+              !currentUserId ||
+              answers?.map((a) => a.answered_by.id).includes(currentUserId)
             }
           >
             <BarChart />
-            <p>Answer</p>
+            <p>
+              {' '}
+              {answers?.map((a) => a.answered_by.id).includes(currentUserId!)
+                ? 'Answered'
+                : 'Answer'}
+            </p>
           </Button>
         )}
       </div>
@@ -84,6 +133,7 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
         open={isOpenInsights}
         setOpen={setIsOpenInsights}
         poll={poll}
+        answers={answers!}
       />
     </div>
   );

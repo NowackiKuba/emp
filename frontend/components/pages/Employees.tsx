@@ -38,10 +38,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import CreateTask from '../dialogs/CreateTask';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
+  const [isOpenAssign, setIsOpenAssign] = useState<boolean>(false);
+  const [employeeId, setEmployeeId] = useState<number>(0);
   const [activeSort, setActiveSort] = useState<string | undefined>();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -162,7 +165,13 @@ const Employees = () => {
                         <Edit className='h-4 w-4' />
                         <p>Edit Employee</p>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setIsOpenAssign(true);
+                          setEmployeeId(employee.id);
+                        }}
+                        className='flex items-center gap-2 cursor-pointer'
+                      >
                         <CircleCheck className='h-4 w-4' />
                         <p>Assign Task</p>
                       </DropdownMenuItem>
@@ -184,6 +193,11 @@ const Employees = () => {
         </Table>
       </div>
       <CreateEmployee open={isOpenCreate} setOpen={setIsOpenCreate} />
+      <CreateTask
+        open={isOpenAssign}
+        setOpen={setIsOpenAssign}
+        employeeId={employeeId}
+      />
     </div>
   );
 };

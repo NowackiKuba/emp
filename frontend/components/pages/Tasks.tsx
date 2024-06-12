@@ -84,10 +84,10 @@ const Tasks = () => {
                       {t.status.toLowerCase()}
                     </TableCell>
                     <TableCell className='first-letter:uppercase'>
-                      {t.assigned_by.first_name} {t.assigned_to.last_name}
+                      {t.assigned_by.first_name} {t.assigned_by.last_name}
                     </TableCell>
                     <TableCell className='first-letter:uppercase'>
-                      {t.assigned_by.first_name} {t.assigned_to.last_name}
+                      {t.assigned_to.first_name} {t.assigned_to.last_name}
                     </TableCell>
                     <TableCell className='flex justify-end items-end'>
                       <DropdownMenu>

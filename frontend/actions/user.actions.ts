@@ -4,7 +4,7 @@ import axios from 'axios';
 import { cookies } from 'next/headers';
 import { getTokenValues } from './auth.actions';
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (): Promise<TUser> => {
   const { userId } = await getTokenValues();
 
   const res = await axios(`http://localhost:8080/user/${userId}`, {
@@ -51,4 +51,12 @@ export const createEmployeeAccount = async ({
 
 export const Test = async () => {
   return await getTokenValues();
+};
+
+export const startWork = async ({ userId }: { userId: number }) => {
+  const res = await axios(`http://localhost:8080/start-work/${userId}`, {
+    method: 'PATCH',
+  });
+
+  return;
 };

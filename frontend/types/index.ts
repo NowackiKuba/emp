@@ -6,7 +6,7 @@ type TDialogProps = DialogProps;
 type TTask = Task;
 type TPoll = Poll;
 type TAnswer = Answer;
-
+type TPTO = PTO;
 interface User {
   id: number;
   first_name: string;
@@ -101,4 +101,22 @@ interface Answer {
   answered_by_id: number;
   poll: Poll;
   answered_by: User;
+  answer: string;
+  created_at: Date;
+}
+
+interface PTO {
+  id: number;
+  title: string;
+  description: string;
+  created_at: Date;
+  updated_at: Date;
+  send_by_id: number;
+  send_by: User;
+  status: string;
+  company_id: number;
+  company: Company;
+  accepted: boolean;
+  start_date: Date;
+  end_date: Date;
 }

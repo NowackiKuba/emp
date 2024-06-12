@@ -27,3 +27,24 @@ func getPollAnswers(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"answers": answers})
 }
+
+func answerPoll(context *gin.Context) { 
+	var answer models.Answer
+
+	err := context.ShouldBindJSON(&answer)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	err = answer.Create()
+
+	if err != nil { 
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully answered poll"})
+}

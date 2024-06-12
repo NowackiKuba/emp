@@ -130,4 +130,25 @@ func CreateTables(DB *sql.DB) {
 		fmt.Println(err)
 		panic("Could not create polls table")
 	}
+	createPTOSTable := `CREATE TABLE IF NOT EXISTS ptos (
+		id SERIAL PRIMARY KEY,
+		created_at TIMESTAMP DEFAULT NOW(),
+		updated_at TIMESTAMP DEFAULT NOW(),
+		title TEXT NOT NULL,
+		description TEXT NOT NULL,
+		send_by_id INTEGER NOT NULL,
+		status TEXT NOT NULL,
+		company_id INT NOT NULL,
+		accepted BOOLEAN,
+		start_date TIMESTAMP NOT NULL,
+		end_date TIMESTAMP NOT NULL,
+		FOREIGN KEY (send_by_id) REFERENCES users (id) ON DELETE SET NULL,
+		FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE
+	)`
+
+	_, err = DB.Exec(createPTOSTable)
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create ptos table")
+	}
 }

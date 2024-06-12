@@ -6,7 +6,10 @@ import { Checkbox } from '../ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { Check } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { answerPoll } from '@/actions/poll.actions';
+import { toast } from '../ui/use-toast';
 
 interface Props extends TDialogProps {
   poll: TPoll;
@@ -15,6 +18,30 @@ interface Props extends TDialogProps {
 const AnswerPollDialog = ({ open, setOpen, poll }: Props) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>();
   const [answered, setAnswered] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const { mutate: answer, isPending: isAnswering } = useMutation({
+    mutationKey: ['answerPoll'],
+    mutationFn: answerPoll,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['getPollAnswers', poll.id],
+        refetchType: 'all',
+      }),
+        setOpen(false);
+      toast({
+        title: 'Poll Answered',
+        duration: 1500,
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Failed to answer poll',
+        description: 'Please try again later',
+        variant: 'destructive',
+        duration: 1500,
+      });
+    },
+  });
   return (
     <Dialog
       open={open}
@@ -66,7 +93,19 @@ const AnswerPollDialog = ({ open, setOpen, poll }: Props) => {
           ))}
         </div>
         <div>
-          <Button>Answer</Button>
+          <Button
+            disabled={isAnswering || !selectedAnswer}
+            onClick={() => answer({ answer: selectedAnswer!, pollId: poll.id })}
+          >
+            {isAnswering ? (
+              <div className='flex items-center gap-1'>
+                <Loader2 className='h-4 w-4 animate-spin' />
+                <p>Answer</p>
+              </div>
+            ) : (
+              'Answer'
+            )}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

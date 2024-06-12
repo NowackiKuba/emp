@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -18,18 +18,30 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar } from '../ui/calendar';
-import { useMutation } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { createTask } from '@/actions/task.actions';
 import { toast } from '../ui/use-toast';
 
-const CreateTask = ({ open, setOpen }: TDialogProps) => {
+interface Props extends TDialogProps {
+  employeeId?: number;
+}
+
+const CreateTask = ({ open, setOpen, employeeId }: Props) => {
   const { employees } = useCompanyEmployees();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [priority, setPriority] = useState<number>(0);
   const [deadline, setDeadline] = useState<Date>();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number>(0);
-
+  useEffect(() => {
+    if (!employeeId) return;
+    setSelectedEmployeeId(employeeId);
+  }, [employeeId]);
+  const queryClient = useQueryClient();
   const { mutate: createTaskMutation, isPending: isCreating } = useMutation({
     mutationKey: ['createTask'],
     mutationFn: createTask,
@@ -39,6 +51,10 @@ const CreateTask = ({ open, setOpen }: TDialogProps) => {
         duration: 1500,
       });
       setOpen(false);
+      queryClient.invalidateQueries({
+        queryKey: ['getCompanyTasks'],
+        refetchType: 'all',
+      });
     },
     onError: () => {
       toast({
