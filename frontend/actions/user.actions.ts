@@ -103,3 +103,34 @@ export const deleteEmployee = async ({ id }: { id: number }) => {
 
   return;
 };
+
+export const endWork = async ({
+  userId,
+  hours,
+}: {
+  userId: number;
+  hours: number;
+}) => {
+  const res = await axios(`http://localhost:8080/end-work/${userId}`, {
+    method: 'PATCH',
+    data: {
+      hours,
+      user_id: userId,
+    },
+  });
+
+  return;
+};
+
+export const getUserWorkHistory = async ({
+  userId,
+}: {
+  userId: number;
+}): Promise<TWorkDay[]> => {
+  const res = await axios(
+    `http://localhost:8080/employee/work-history/${userId}`,
+    { method: 'GET' }
+  );
+
+  return res.data.history;
+};

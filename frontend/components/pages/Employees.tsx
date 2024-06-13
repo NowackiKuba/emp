@@ -56,6 +56,7 @@ import EditEmployee from '../dialogs/EditEmployee';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteEmployee } from '@/actions/user.actions';
 import { toast } from '../ui/use-toast';
+import EmployeeDetails from '../dialogs/EmployeeDetails';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
@@ -63,6 +64,7 @@ const Employees = () => {
   const [isOpenAssign, setIsOpenAssign] = useState<boolean>(false);
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
+  const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false);
   const [employeeId, setEmployeeId] = useState<number>(0);
   const [activeSort, setActiveSort] = useState<string | undefined>();
   const [selectedEmployee, setSelectedEmployee] = useState<TUser>();
@@ -203,7 +205,13 @@ const Employees = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedEmployee(employee);
+                          setIsOpenDetails(true);
+                        }}
+                        className='flex items-center gap-2 cursor-pointer'
+                      >
                         <Eye className='h-4 w-4' />
                         <p>See Details</p>
                       </DropdownMenuItem>
@@ -298,6 +306,11 @@ const Employees = () => {
         open={isOpenAssign}
         setOpen={setIsOpenAssign}
         employeeId={employeeId}
+      />
+      <EmployeeDetails
+        open={isOpenDetails}
+        setOpen={setIsOpenDetails}
+        user={selectedEmployee!}
       />
     </div>
   );

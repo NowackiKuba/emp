@@ -86,3 +86,18 @@ export const updateTask = async ({
 
   return;
 };
+
+export const getEmployeeTasks = async ({
+  employeeId,
+}: {
+  employeeId: number;
+}): Promise<TTask[]> => {
+  const res = await axios(
+    `http://localhost:8080/tasks/employee/${employeeId}`,
+    {
+      method: 'GET',
+    }
+  );
+
+  return res.data.tasks;
+};

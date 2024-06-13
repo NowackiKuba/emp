@@ -219,6 +219,21 @@ func StartWork(id int32) error {
 
 	return err
 }
+func EndWork(id int32) error { 
+	query := `UPDATE users SET is_working = $1, work_end = $2 WHERE id = $3`
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil { 
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(false, time.Now(), id)
+
+	return err
+}
 
 func (u *User) Update() error { 
 	query := `UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4, role = $5, position = $6, img_url = $7 WHERE id = $8`

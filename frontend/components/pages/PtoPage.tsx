@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
-import { Bot, CirclePlus, Eye, FileText } from 'lucide-react';
+import { Bot, CirclePlus, Eye, FileText, Ghost } from 'lucide-react';
 import CreatePTO from '../dialogs/CreatePTO';
 import { useQuery } from '@tanstack/react-query';
 import { getCompanyPtos } from '@/actions/pto.actions';
@@ -60,6 +60,7 @@ const PtoPage = () => {
         </Button>
       </div>
       <div className='flex items-center gap-2 w-full'>
+        {ptos?.length === 0 ? <div>asd</div> : null}
         {ptos?.map((pto) => (
           <div
             key={pto.id}

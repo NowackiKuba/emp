@@ -9,6 +9,7 @@ type TAnswer = Answer;
 type TPTO = PTO;
 type TSurvey = Survey;
 type TQuestion = SurveyQuestion;
+type TWorkDay = WorkDay;
 
 interface User {
   id: number;
@@ -145,4 +146,13 @@ interface SurveyQuestion {
   answers: string[];
   survey_id: number;
   input_type: string;
+}
+
+interface WorkDay {
+  id: number;
+  hours: number;
+  user_id: number;
+  user: User;
+  created_at: Date;
+  updated_at: Date;
 }

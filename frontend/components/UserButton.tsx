@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar } from './ui/avatar';
 import {
   DropdownMenu,
@@ -28,11 +28,39 @@ import {
   TooltipTrigger,
 } from './ui/tooltip';
 import Link from 'next/link';
+import WorkDialog from './dialogs/WorkDialog';
 
 const UserButton = ({ user }: { user: TUser }) => {
   const { theme, setTheme } = useTheme();
+  const [isOpenWorkDialog, setOpenWorkDialog] = useState(false);
   return (
     <div className='flex items-center gap-2'>
+      {!user?.is_working && (
+        <div className='px-1 py-0.5 text-xs rounded-sm bg-red-500 text-white'>
+          Not Working
+        </div>
+      )}
+      <>
+        {user?.is_on_break && (
+          <div className='px-1 py-0.5 text-xs rounded-sm bg-primary text-white'>
+            On Break
+          </div>
+        )}
+        {user?.is_on_vacation && (
+          <div className='px-1 py-0.5 text-xs rounded-sm bg-yellow-500 text-white'>
+            🏝️ Happy Vacation
+          </div>
+        )}
+        {user?.is_working && (
+          <div
+            onClick={() => setOpenWorkDialog(true)}
+            className='px-4 py-2 text-xs font-[500] flex flex-col items-start cursor-pointer rounded-sm bg-green-500 text-white'
+          >
+            <p>Currently Working</p>
+            <p>since {format(user?.work_start, 'dd.MM.yyyy')}</p>
+          </div>
+        )}
+      </>
       <DropdownMenu>
         <DropdownMenuTrigger>
           {user?.img_url === '' ? (
@@ -70,28 +98,6 @@ const UserButton = ({ user }: { user: TUser }) => {
               <p className='text-lg font-semibold'>
                 {user?.first_name} {user?.last_name}
               </p>
-              {!user?.is_working && (
-                <div className='px-1 py-0.5 text-xs rounded-sm bg-red-500 text-white'>
-                  Not Working
-                </div>
-              )}
-              <>
-                {user?.is_on_break && (
-                  <div className='px-1 py-0.5 text-xs rounded-sm bg-primary text-white'>
-                    On Break
-                  </div>
-                )}
-                {user?.is_on_vacation && (
-                  <div className='px-1 py-0.5 text-xs rounded-sm bg-yellow-500 text-white'>
-                    🏝️ Happy Vacation
-                  </div>
-                )}
-                {user?.is_working && (
-                  <div className='px-1 py-0.5 text-xs rounded-sm bg-green-500 text-white'>
-                    Working since {format(user?.work_start, 'HH:mm')}
-                  </div>
-                )}
-              </>
             </div>
           </div>
           <DropdownMenuItem className='cursor-pointer'>
@@ -135,6 +141,11 @@ const UserButton = ({ user }: { user: TUser }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <WorkDialog
+        open={isOpenWorkDialog}
+        setOpen={setOpenWorkDialog}
+        user={user}
+      />
     </div>
   );
 };

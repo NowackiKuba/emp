@@ -198,3 +198,95 @@ func (t *Task) Update() error {
 
 	return err
 }
+
+
+func GetUserTasks(userId int32) (*[]Task, error) { 
+	query := `
+	SELECT
+    t.*,
+    u1.* AS assigned_by_user,
+    u2.* AS assigned_to_user
+	FROM
+    tasks t
+	LEFT JOIN
+    users u1 ON t.assigned_by_id = u1.id
+	LEFT JOIN
+    users u2 ON t.assigned_to_id = u2.id
+	WHERE
+    t.assigned_to_id = $1;
+	`
+	rows, err := db.DB.Query(query, userId)
+	if err != nil {
+		return nil, fmt.Errorf("could not execute query: %v", err)
+	}
+	defer rows.Close()
+
+	var tasks []Task
+
+	for rows.Next() {
+		var task Task
+		var assignedBy User
+		var assignedTo User
+
+		err := rows.Scan(
+			&task.ID,
+			&task.Title,
+			&task.Description,
+			&task.CreatedAt,
+			&task.UpdatedAt,
+			&task.Deadline,
+			&task.Priority,
+			&task.Status,
+			&task.CompanyId,
+			&task.AssignedById,
+			&task.AssignedToId,
+			&assignedBy.ID,
+			&assignedBy.FirstName,
+			&assignedBy.LastName,
+			&assignedBy.Email,
+			&assignedBy.Password,
+			&assignedBy.CreatedAt,
+			&assignedBy.UpdatedAt,
+			&assignedBy.IsWorking,
+			&assignedBy.WorkStart,
+			&assignedBy.WorkEnd,
+			&assignedBy.IsOnBreak,
+			&assignedBy.IsOnVacation,
+			&assignedBy.ImgUrl,
+			&assignedBy.Role,
+			&assignedBy.Position,
+			&assignedBy.CompanyID,
+			&assignedTo.ID,
+			&assignedTo.FirstName,
+			&assignedTo.LastName,
+			&assignedTo.Email,
+			&assignedTo.Password,
+			&assignedTo.CreatedAt,
+			&assignedTo.UpdatedAt,
+			&assignedTo.IsWorking,
+			&assignedTo.WorkStart,
+			&assignedTo.WorkEnd,
+			&assignedTo.IsOnBreak,
+			&assignedTo.IsOnVacation,
+			&assignedTo.ImgUrl,
+			&assignedTo.Role,
+			&assignedTo.Position,
+			&assignedTo.CompanyID,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("could not scan row: %v", err)
+		}
+
+		task.AssignedBy = assignedBy
+		task.AssignedTo = assignedTo
+
+		tasks = append(tasks, task)
+	}
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows iteration error: %v", rows.Err())
+	}
+
+	return &tasks, nil
+
+}

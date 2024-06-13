@@ -204,4 +204,18 @@ func CreateTables(DB *sql.DB) {
 		fmt.Println(err)
 		panic("Could not create ptos table")
 	}
+	createUserWorkigDaysTable := `CREATE TABLE IF NOT EXISTS user_working_days (
+		id SERIAL PRIMARY KEY,
+		created_at TIMESTAMP DEFAULT NOW(),
+		updated_at TIMESTAMP DEFAULT NOW(),
+		hours INTEGER NOT NULL,
+		user_id INTEGER NOT NULL,
+		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+	)`
+
+	_, err = DB.Exec(createUserWorkigDaysTable)
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create ptos table")
+	}
 }
