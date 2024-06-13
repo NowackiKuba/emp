@@ -7,6 +7,7 @@ import {
   Edit,
   Eye,
   FileQuestion,
+  Loader2,
   Settings,
   Trash,
 } from 'lucide-react';
@@ -38,16 +39,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import CreateTask from '../dialogs/CreateTask';
 import { format } from 'date-fns';
+import EditEmployee from '../dialogs/EditEmployee';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteEmployee } from '@/actions/user.actions';
+import { toast } from '../ui/use-toast';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
   const [isOpenAssign, setIsOpenAssign] = useState<boolean>(false);
+  const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
+  const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const [employeeId, setEmployeeId] = useState<number>(0);
   const [activeSort, setActiveSort] = useState<string | undefined>();
+  const [selectedEmployee, setSelectedEmployee] = useState<TUser>();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const handleSort = (item: string) => {
     if (activeSort === item) {
@@ -69,7 +89,28 @@ const Employees = () => {
       router.push(newUrl, { scroll: false });
     }
   };
-
+  const { mutate: deleteUser, isPending: isDeleting } = useMutation({
+    mutationKey: ['deleteUser'],
+    mutationFn: deleteEmployee,
+    onSuccess: () => {
+      toast({
+        title: 'Successfully deleted employee',
+        duration: 1500,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['getCompanyEmployees'],
+        refetchType: 'all',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Failed to delete employee',
+        description: 'Please try again later',
+        variant: 'destructive',
+        duration: 1500,
+      });
+    },
+  });
   if (isLoading) {
     return <p>...loading</p>;
   }
@@ -166,7 +207,13 @@ const Employees = () => {
                         <Eye className='h-4 w-4' />
                         <p>See Details</p>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                      <DropdownMenuItem
+                        className='flex items-center gap-2 cursor-pointer'
+                        onClick={() => {
+                          setIsOpenEdit(true);
+                          setSelectedEmployee(employee);
+                        }}
+                      >
                         <Edit className='h-4 w-4' />
                         <p>Edit Employee</p>
                       </DropdownMenuItem>
@@ -185,9 +232,18 @@ const Employees = () => {
                         <p>Ask Question</p>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer text-red-500'>
+
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setIsOpenDelete(true);
+                          setEmployeeId(employee.id);
+                        }}
+                        className='flex items-center gap-2 cursor-pointer text-red-500'
+                      >
                         <Trash className='h-4 w-4' />
-                        <p>Ask Question</p>
+                        <p>
+                          Delete {employee?.first_name} {employee?.last_name}
+                        </p>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -197,7 +253,47 @@ const Employees = () => {
           </TableBody>
         </Table>
       </div>
+      <AlertDialog
+        open={isOpenDelete}
+        onOpenChange={(v) => {
+          if (!v) {
+            setIsOpenDelete(v);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <Button
+              variant={'destructive'}
+              onClick={() => deleteUser({ id: employeeId })}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <div className='flex items-center gap-1'>
+                  <Loader2 className='h-4 w-4 animate-spin' />
+                  <p>Delete</p>
+                </div>
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <CreateEmployee open={isOpenCreate} setOpen={setIsOpenCreate} />
+      <EditEmployee
+        open={isOpenEdit}
+        setOpen={setIsOpenEdit}
+        employee={selectedEmployee!}
+      />
       <CreateTask
         open={isOpenAssign}
         setOpen={setIsOpenAssign}

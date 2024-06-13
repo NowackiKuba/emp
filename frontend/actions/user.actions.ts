@@ -60,3 +60,46 @@ export const startWork = async ({ userId }: { userId: number }) => {
 
   return;
 };
+
+export const editEmployee = async ({
+  firstName,
+  lastName,
+  email,
+  password,
+  role,
+  position,
+  image,
+  id,
+}: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  position: string;
+  image: string;
+  id: number;
+}) => {
+  const res = await axios(`http://localhost:8080/employee/${id}`, {
+    method: 'PATCH',
+    data: {
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password,
+      role,
+      position,
+      img_url: image,
+    },
+  });
+
+  return;
+};
+
+export const deleteEmployee = async ({ id }: { id: number }) => {
+  const res = await axios(`http://localhost:8080/employee/${id}`, {
+    method: 'DELETE',
+  });
+
+  return;
+};

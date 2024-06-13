@@ -14,6 +14,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.POST("/answer", answerPoll)
 	server.POST("/survey", createSurvey)
 	server.PATCH("/pto/:ptoId", updatePTO)
+	server.PATCH("/employee/:userId", updateEmployee)
 	server.PATCH("/task/:taskId", updateTask)
 	server.PATCH("/start-work/:userId", startWork)
 	server.GET("/employees/:companyId", getCompanyUsers)
@@ -27,4 +28,5 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/polls/:companyId", getCompanyPolls)
 	server.GET("/answers/:pollId", getPollAnswers)
 	server.DELETE("/task/:id")
+	server.DELETE("/employee/:id", deleteEmployee)
 }

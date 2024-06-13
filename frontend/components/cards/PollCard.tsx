@@ -9,6 +9,7 @@ import AnswerPollDialog from '../dialogs/AnswerPollDialog';
 import PollInsightsDialog from '../dialogs/PollInsightsDialog';
 import { useQuery } from '@tanstack/react-query';
 import { getPollAnswers } from '@/actions/poll.actions';
+import AnsweredDialog from '../dialogs/AnsweredDialog';
 
 const PollCard = ({ poll }: { poll: TPoll }) => {
   const { data: answers, isLoading } = useQuery({
@@ -17,6 +18,7 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
   });
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isOpenAnswer, setIsOpenAnswer] = useState<boolean>(false);
+  const [isOpenAnswers, setIsOpenAnswers] = useState<boolean>(false);
   const [isOpenInsights, setIsOpenInsights] = useState<boolean>(false);
   useEffect(() => {
     const fetchCurrentUserId = async () => {
@@ -87,7 +89,10 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
           </>
         ))}
         {answers && answers?.length > 3 ? (
-          <p className='text-xs text-gray-400 ml-16'>
+          <p
+            onClick={() => setIsOpenAnswers(true)}
+            className='text-xs text-gray-400 ml-16 cursor-pointer hover:underline transition-all duration-150'
+          >
             +{answers?.length - 3} more already answered{' '}
           </p>
         ) : (
@@ -128,6 +133,11 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
         open={isOpenAnswer}
         setOpen={setIsOpenAnswer}
         poll={poll}
+      />
+      <AnsweredDialog
+        open={isOpenAnswers}
+        setOpen={setIsOpenAnswers}
+        answers={answers!}
       />
       <PollInsightsDialog
         open={isOpenInsights}

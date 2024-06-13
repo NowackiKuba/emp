@@ -219,3 +219,41 @@ func StartWork(id int32) error {
 
 	return err
 }
+
+func (u *User) Update() error { 
+	query := `UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4, role = $5, position = $6, img_url = $7 WHERE id = $8`
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil { 
+		return err
+	}
+
+	defer stmt.Close()
+
+	hashedPassword, err := utils.HashPassword(u.Password)
+
+	if err != nil { 
+		return err
+	}
+
+	_, err = stmt.Exec(u.FirstName, u.LastName, u.Email, hashedPassword, u.Role, u.Position, u.ImgUrl, u.ID)
+
+	return err
+}
+
+func DeleteEmployee(id int32) error { 
+	query := `DELETE FROM users WHERE id = $1`
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil { 
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+
+	return err
+}

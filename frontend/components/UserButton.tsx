@@ -27,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
+import Link from 'next/link';
 
 const UserButton = ({ user }: { user: TUser }) => {
   const { theme, setTheme } = useTheme();
@@ -93,9 +94,11 @@ const UserButton = ({ user }: { user: TUser }) => {
               </>
             </div>
           </div>
-          <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
-            <Settings className='h-4 w-4' />
-            <p>Settings</p>
+          <DropdownMenuItem className='cursor-pointer'>
+            <Link href={'/settings'} className='flex items-center gap-2 '>
+              <Settings className='h-4 w-4' />
+              <p>Settings</p>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
             <Bookmark className='h-4 w-4' />

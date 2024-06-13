@@ -145,3 +145,50 @@ func startWork(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "Work Started"})
 }
+
+func updateEmployee(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("userId"), 10, 64)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	var updatedEmployee models.User
+
+	err = context.ShouldBindJSON(&updatedEmployee)
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not parse request data, try again later"})
+		return
+	}
+
+	updatedEmployee.ID = int32(id)
+	err = updatedEmployee.Update()
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully updated employee"}) 
+}
+
+func deleteEmployee(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	err = models.DeleteEmployee(int32(id))
+
+	if err != nil { 
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully deleted user"})
+}
