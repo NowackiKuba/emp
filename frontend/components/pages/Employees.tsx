@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import {
+  ChevronRight,
   CircleCheck,
   CirclePlus,
   Edit,
@@ -124,10 +125,10 @@ const Employees = () => {
             placeholder='Search for employees'
             iconPosition='left'
             route='/employees'
-            otherClasses='xl:max-w-[280px]'
+            otherClasses='lg:max-w-[280px] md:max-w-[220px] max-w-[240px]'
           />
           <Select onValueChange={(e) => handleSort(e)}>
-            <SelectTrigger className='xl:max-w-[200px]'>
+            <SelectTrigger className='md:max-w-[180px] max-w-[140px]'>
               <SelectValue placeholder='Sort' />
             </SelectTrigger>
             <SelectContent>
@@ -139,14 +140,21 @@ const Employees = () => {
         <div className='flex items-center gap-2'>
           <Button
             onClick={() => setIsOpenCreate(true)}
-            className='flex items-center gap-2'
+            className='hidden md:flex items-center gap-2'
           >
             <CirclePlus className='h-4 w-4' />
             Create Employee Account
           </Button>
+          <Button
+            onClick={() => setIsOpenCreate(true)}
+            size={'icon'}
+            className='flex md:hidden items-center gap-2'
+          >
+            <CirclePlus className='h-4 w-4' />
+          </Button>
         </div>
       </div>
-      <div className='w-full'>
+      <div className='md:flex hidden w-full'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -260,6 +268,36 @@ const Employees = () => {
             ))}
           </TableBody>
         </Table>
+      </div>
+      <div className='md:hidden flex items-center flex-wrap gap-2'>
+        {employees?.map((e) => (
+          <div
+            key={e.id}
+            className='w-full sm:w-[calc(50%-4px)] bg-secondary p-2 rounded-xl flex items-center justify-between gap-1.5'
+          >
+            <div className='flex items-center gap-2 w-full'>
+              <Avatar className='h-20 w-20 rounded-md'>
+                <AvatarImage
+                  src={e.img_url}
+                  className='h-20 w-20 object-cover rounded-md'
+                />
+                <AvatarFallback className='h-20 w-20'>
+                  <div className='h-full w-full bg-primary/10 text-primary dark:bg-red-500/20 dark:text-red-200 flex items-center justify-center text-2xl font-bold'>
+                    {e.first_name[0]}
+                    {e.last_name[0]}
+                  </div>
+                </AvatarFallback>
+              </Avatar>
+              <div className='flex flex-col'>
+                <p className='text-xl sm:text-[22px] font-[600]'>
+                  {e.first_name} {e.last_name}
+                </p>
+                <p className='text-sm text-gray-600'>{e.email}</p>
+              </div>
+            </div>
+            <ChevronRight />
+          </div>
+        ))}
       </div>
       <AlertDialog
         open={isOpenDelete}

@@ -119,6 +119,14 @@ module.exports = {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
+        'icon-green': {
+          DEFAULT: 'hsl(var(--icon-green))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        'icon-yellow': {
+          DEFAULT: 'hsl(var(--icon-yellow))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',

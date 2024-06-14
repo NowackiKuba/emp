@@ -67,7 +67,7 @@ export const getPriorityProps = (priority: number) => {
     case 1:
       return {
         textColor: 'text-yellow-500 dark:text-yellow-200',
-        bg: 'bg-yellow-500/10 dark:bg-yellow-500/20',
+        bg: 'bg-icon-yellow/10 dark:bg-icon-yellow/20',
         text: 'Medium',
         icon: FcMediumPriority,
       };
@@ -75,7 +75,7 @@ export const getPriorityProps = (priority: number) => {
     case 0:
       return {
         textColor: 'text-green-500 dark:text-green-200',
-        bg: 'bg-green-500/10 dark:bg-green-500/20',
+        bg: 'bg-icon-green/10 dark:bg-icon-green/20',
         text: 'Low',
         icon: FcLowPriority,
       };

@@ -7,7 +7,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
       <section className='w-full'>
         <Navbar />
       </section>
-      <section className='w-full h-full px-12 mt-4'>{children}</section>
+      <section className='w-full h-full px-3 md:px-12 mt-4'>{children}</section>
     </main>
   );
 };

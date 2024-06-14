@@ -11,13 +11,13 @@ const Navbar = () => {
   const pathname = usePathname();
   const employeeToShow = ['Home', 'Tasks', 'Polls', 'Opinions', "PTO's"];
   return (
-    <div className='bg-background w-full px-12 py-4 flex items-center justify-between'>
+    <div className='bg-background w-full px-3 md:px-12 py-4 flex items-center justify-between'>
       <div className='bg-gradient-to-r from-primary to-purple-500 bg-clip-text'>
         <Link href={'/'} className='text-4xl font-semibold text-transparent'>
           EMP
         </Link>
       </div>
-      <div className='flex items-center justify-center gap-2'>
+      <div className='hidden xl:flex items-center justify-center gap-2'>
         {navLinks.map((link) => {
           const Icon = link.icon;
           return (

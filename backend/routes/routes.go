@@ -26,6 +26,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/tasks/:companyId", getCompanyTasks)
 	server.GET("/employee/work-history/:userId", getUserWorkHistory)
 	server.GET("/user/:id", getUserById)
+	server.GET("/user/surveys/:userId", getUserById)
 	server.GET("/task/:id", getTaskById)
 	server.GET("/tasks/employee/:userId", getEmployeeTasks)
 	server.GET("/surveys/:companyId", getCompanySurveys)

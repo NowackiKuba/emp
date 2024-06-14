@@ -70,3 +70,14 @@ func GetSurveyQuestions(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"questions": questions})
 }
+
+// func getUserAnsweredSurveys(context *gin.Context) { 
+// 	id, err := strconv.ParseInt(context.Param("userId"), 10, 64)
+
+
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		context.JSON(http.StatusBadRequest, gin.H{"message":"Could not parse incoming data"})
+// 		return
+// 	}
+// }

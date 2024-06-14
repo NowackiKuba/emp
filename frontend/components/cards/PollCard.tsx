@@ -30,7 +30,7 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
   return (
     <div
       key={poll.id}
-      className='h-80 w-80 py-2 rounded-xl bg-secondary flex items-start justify-start flex-col gap-2 px-4'
+      className='h-80 w-full sm:w-80 py-2 rounded-xl bg-secondary flex items-start justify-start flex-col gap-2 px-4'
     >
       <div className='flex items-center gap-2'>
         <div className='h-24 w-24 bg-primary/10 rounded-full text-primary dark:bg-red-500/20 dark:text-red-200 flex items-center justify-center'>
