@@ -18,11 +18,11 @@ type User struct {
 	Password     string    `json:"password"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
+	IsWorking    bool      `json:"is_working"`
 	WorkStart    time.Time `json:"work_start"`
 	WorkEnd      time.Time `json:"work_end"`
-	IsWorking    bool      `json:"is_working"`
-	IsOnBreak    bool      `json:"is_on_break"`
 	IsOnVacation bool      `json:"is_on_vacation"`
+	IsOnBreak    bool      `json:"is_on_break"`
 	ImgUrl       string    `json:"img_url"`
 	Role		 string	   `json:"role"`
 	Position 	 string    `json:"position"`
@@ -127,8 +127,8 @@ func GetCompanyUsers(id int32) (*[]User, error) {
             &user.IsWorking,
             &user.WorkStart,
             &user.WorkEnd,
-            &user.IsOnBreak,
             &user.IsOnVacation,
+            &user.IsOnBreak,
             &user.ImgUrl,
             &user.Role,
 			&user.Position,
@@ -163,8 +163,8 @@ func GetUser(id int32) (*User, error) {
             &user.IsWorking,
             &user.WorkStart,
             &user.WorkEnd,
-            &user.IsOnBreak,
             &user.IsOnVacation,
+            &user.IsOnBreak,
             &user.ImgUrl,
             &user.Role,
 			&user.Position,
@@ -272,3 +272,21 @@ func DeleteEmployee(id int32) error {
 
 	return err
 }
+
+func (u *User) ManageBreak() error { 
+	query := `UPDATE users SET is_on_break = $1 WHERE id = $2`
+
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil { 
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(u.IsOnBreak, u.ID)
+
+	return err
+}
+
+

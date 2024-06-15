@@ -33,6 +33,7 @@ import WorkDialog from './dialogs/WorkDialog';
 const UserButton = ({ user }: { user: TUser }) => {
   const { theme, setTheme } = useTheme();
   const [isOpenWorkDialog, setOpenWorkDialog] = useState(false);
+  console.log(user);
   return (
     <div className='flex items-center gap-2'>
       {!user?.is_working && (
@@ -41,17 +42,18 @@ const UserButton = ({ user }: { user: TUser }) => {
         </div>
       )}
       <>
-        {user?.is_on_break && (
-          <div className='px-1 py-0.5 text-xs rounded-sm bg-primary text-white'>
+        {user?.is_on_break ? (
+          <div
+            onClick={() => setOpenWorkDialog(true)}
+            className='px-4 py-2 text-xs font-[500] flex flex-col items-start cursor-pointer rounded-sm bg-sky-500 text-white'
+          >
             On Break
           </div>
-        )}
-        {user?.is_on_vacation && (
+        ) : user?.is_on_vacation ? (
           <div className='px-1 py-0.5 text-xs rounded-sm bg-yellow-500 text-white'>
             🏝️ Happy Vacation
           </div>
-        )}
-        {user?.is_working && (
+        ) : user?.is_working ? (
           <div
             onClick={() => setOpenWorkDialog(true)}
             className='px-4 py-2 text-xs font-[500] flex flex-col items-start cursor-pointer rounded-sm bg-green-500 text-white'
@@ -59,7 +61,7 @@ const UserButton = ({ user }: { user: TUser }) => {
             <p>Currently Working</p>
             <p>since {format(user?.work_start, 'dd.MM.yyyy')}</p>
           </div>
-        )}
+        ) : null}
       </>
       <DropdownMenu>
         <DropdownMenuTrigger>

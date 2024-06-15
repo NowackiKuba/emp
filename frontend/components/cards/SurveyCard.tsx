@@ -1,18 +1,29 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { Eye, NotepadText } from 'lucide-react';
+import { CircleCheck, Eye, NotepadText } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { format } from 'date-fns';
 import AnswerSurveyDialog from '../dialogs/AnswerSurveyDialog';
+import { getTokenValues } from '@/actions/auth.actions';
+import SurveyInsights from '../dialogs/SurveyInsights';
 
 interface Props {
   survey: TSurvey;
-  currentUserId: number | null;
 }
 
-const SurveyCard = ({ survey, currentUserId }: Props) => {
+const SurveyCard = ({ survey }: Props) => {
   const [isOpenAnswer, setIsOpenAnswer] = useState<boolean>(false);
+  const [isOpenInsights, setIsOpenInsights] = useState<boolean>(false);
+  const [currentUserId, SetCurrentUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUserId = async () => {
+      const { userId } = await getTokenValues();
+      SetCurrentUserId(userId);
+    };
+    fetchCurrentUserId();
+  }, []);
   return (
     <div
       key={survey.id}
@@ -62,12 +73,17 @@ const SurveyCard = ({ survey, currentUserId }: Props) => {
         {currentUserId === survey.created_by_id ? (
           <Button
             className='w-full flex items-center gap-2'
-            onClick={() => setIsOpenAnswer(true)}
+            onClick={() => setIsOpenInsights(true)}
           >
             <Eye />
             <p>See Insights</p>
           </Button>
-        ) : null}
+        ) : (
+          <Button className='w-full flex items-center gap-2'>
+            <CircleCheck />
+            <p>Take a survey</p>
+          </Button>
+        )}
       </div>
       <AnswerSurveyDialog
         open={isOpenAnswer}
@@ -75,6 +91,11 @@ const SurveyCard = ({ survey, currentUserId }: Props) => {
         creatorFullName={`${survey?.created_by?.first_name} ${survey?.created_by?.last_name}`}
         surveyId={survey.id}
         surveyTitle={survey.title}
+      />
+      <SurveyInsights
+        open={isOpenInsights}
+        setOpen={setIsOpenInsights}
+        survey={survey}
       />
     </div>
   );

@@ -5,11 +5,19 @@ import React from 'react';
 import UserButton from '../UserButton';
 import { useUser } from '@/hooks/useUser';
 import { usePathname } from 'next/navigation';
+import MobileNav from './MobileNav';
 
 const Navbar = () => {
   const { user, isLoading } = useUser();
   const pathname = usePathname();
-  const employeeToShow = ['Home', 'Tasks', 'Polls', 'Opinions', "PTO's"];
+  const employeeToShow = [
+    'Home',
+    'Tasks',
+    'Polls',
+    'Opinions',
+    "PTO's",
+    'Surveys',
+  ];
   return (
     <div className='bg-background w-full px-3 md:px-12 py-4 flex items-center justify-between'>
       <div className='bg-gradient-to-r from-primary to-purple-500 bg-clip-text'>
@@ -42,7 +50,12 @@ const Navbar = () => {
           );
         })}
       </div>
-      <UserButton user={user!} />
+      <div className='md:flex hidden'>
+        <UserButton user={user!} />
+      </div>
+      <div className='md:hidden flex'>
+        <MobileNav user={user!} />
+      </div>
     </div>
   );
 };

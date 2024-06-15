@@ -31,8 +31,10 @@ import {
 } from '../ui/dropdown-menu';
 import TaskDetails from '../dialogs/TaskDetails';
 import EditTask from '../dialogs/EditTask';
+import { useUser } from '@/hooks/useUser';
 
 const Tasks = () => {
+  const { user } = useUser();
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
   const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false);
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
@@ -49,13 +51,15 @@ const Tasks = () => {
       <div className='flex items-center justify-between'>
         <p className='text-2xl font-semibold'>Tasks</p>
         <div className='flex items-center gap-2'>
-          <Button
-            className='flex items-center gap-2'
-            onClick={() => setIsOpenCreate(true)}
-          >
-            <CirclePlus />
-            <p>Create Task</p>
-          </Button>
+          {user?.role.toLowerCase() !== 'employee' && (
+            <Button
+              className='flex items-center gap-2'
+              onClick={() => setIsOpenCreate(true)}
+            >
+              <CirclePlus />
+              <p>Create Task</p>
+            </Button>
+          )}
         </div>
       </div>
       {view === 'list' ? (

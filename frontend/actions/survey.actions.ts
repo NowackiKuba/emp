@@ -74,3 +74,11 @@ export const answerSurvey = async ({
 
   return;
 };
+
+export const getSurveyAnswers = async ({ surveyId }: { surveyId: number }) => {
+  const res = await axios(`http://localhost:8080/survey/answers/${surveyId}`, {
+    method: 'GET',
+  });
+
+  return res.data.answers;
+};

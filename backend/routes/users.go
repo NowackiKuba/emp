@@ -192,3 +192,32 @@ func deleteEmployee(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "Successfully deleted user"})
 }
+
+func manageBreak(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("id"), 10, 64)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	var user models.User
+
+	err = context.ShouldBindJSON(&user)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	user.ID = int32(id)
+
+	err = user.ManageBreak()
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully updated break status"})
+}

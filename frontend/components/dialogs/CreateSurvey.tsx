@@ -91,13 +91,71 @@ const CreateSurvey = ({ open, setOpen }: TDialogProps) => {
         <p className='text-xl font-semibold'>Create Survey</p>
         {!type && (
           <>
-            <div className='flex flex-col gap-1.5 py-4'>
+            <div className='flex flex-col gap-1.5 pt-4'>
               <Label>Title</Label>
               <Input
                 onChange={(e) => {
                   setTitle(e.target.value);
                 }}
               />
+            </div>
+            <div className='flex flex-col gap-0.5 w-full'>
+              <Label>Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !startDate && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarIcon className='mr-2 h-4 w-4' />
+                    {startDate ? (
+                      format(startDate, 'PPP')
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className='w-auto p-0'>
+                  <Calendar
+                    mode='single'
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className='flex flex-col gap-0.5 w-full'>
+              <Label>End Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !endDate && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarIcon className='mr-2 h-4 w-4' />
+                    {endDate ? (
+                      format(endDate, 'PPP')
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className='w-auto p-0'>
+                  <Calendar
+                    mode='single'
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className='flex items-center gap-2 w-full flex-wrap'>
               <div
@@ -156,6 +214,21 @@ const CreateSurvey = ({ open, setOpen }: TDialogProps) => {
                 </p>
               </div>
             </div>
+            <Button
+              disabled={questions?.length < 2}
+              onClick={() =>
+                create({
+                  endDate: endDate!,
+                  startDate: startDate!,
+                  questions,
+                  title,
+                })
+              }
+            >
+              {questions?.length < 2
+                ? 'Add At Least 2 Questions To Create Survey'
+                : 'Create Survey'}
+            </Button>
           </>
         )}
         {type === 'text' ? (
@@ -693,72 +766,6 @@ const CreateSurvey = ({ open, setOpen }: TDialogProps) => {
             </div>
           </div>
         ) : null}
-        <div className='flex flex-col gap-0.5 w-full'>
-          <Label>Start Date</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'outline'}
-                className={cn(
-                  'w-full justify-start text-left font-normal',
-                  !startDate && 'text-muted-foreground'
-                )}
-              >
-                <CalendarIcon className='mr-2 h-4 w-4' />
-                {startDate ? (
-                  format(startDate, 'PPP')
-                ) : (
-                  <span>Pick a date</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-auto p-0'>
-              <Calendar
-                mode='single'
-                selected={startDate}
-                onSelect={setStartDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className='flex flex-col gap-0.5 w-full'>
-          <Label>End Date</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'outline'}
-                className={cn(
-                  'w-full justify-start text-left font-normal',
-                  !endDate && 'text-muted-foreground'
-                )}
-              >
-                <CalendarIcon className='mr-2 h-4 w-4' />
-                {endDate ? format(endDate, 'PPP') : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-auto p-0'>
-              <Calendar
-                mode='single'
-                selected={endDate}
-                onSelect={setEndDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        <Button
-          onClick={() =>
-            create({
-              endDate: endDate!,
-              startDate: startDate!,
-              questions,
-              title,
-            })
-          }
-        >
-          Create Survey
-        </Button>
       </DialogContent>
     </Dialog>
   );

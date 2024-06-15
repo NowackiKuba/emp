@@ -21,13 +21,13 @@ const TaskDetails = ({ open, setOpen, task }: Props) => {
       }}
     >
       <DialogContent className='flex flex-col gap-4 w-full max-w-2xl'>
-        <div className='flex items-start gap-2'>
+        <div className='flex items-start gap-4'>
           <div
             className={`${bg} flex items-center justify-center h-24 w-24 rounded-xl`}
           >
             <Icon className='h-12 w-12' />
           </div>
-          <div className='flex flex-col gap-1'>
+          <div className='flex flex-col justify-between h-24'>
             <p className='text-2xl font-semibold'>{task?.title}</p>
             <div className='text-gray-400 dark:text-gray-600 flex items-center gap-1'>
               To:{' '}
@@ -63,6 +63,10 @@ const TaskDetails = ({ open, setOpen, task }: Props) => {
               Deadline: {format(task?.deadline || new Date(), 'dd.MM.yyyy')}
             </p>
           </div>
+        </div>
+        <p className='text-xl font-semibold mt-3.5'>Description</p>
+        <div className='w-full bg-neutral-900 px-2 py-3 rounded-xl'>
+          <p className='text-gray-200 italic'>{task?.description}</p>
         </div>
       </DialogContent>
     </Dialog>

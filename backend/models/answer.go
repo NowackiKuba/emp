@@ -104,3 +104,55 @@ func GetPollAnswers(id int32) (*[]Answer, error) {
 
 	return &answers, nil
 }
+
+
+func GetUseredAnsweredPolls(id int32) (*[]Poll, error) {
+	query := "SELECT poll_id FROM answers WHERE answered_by_id = $1"
+
+	rows, err := db.DB.Query(query, id)
+	
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var polls_ids []int32
+	for rows.Next() { 
+		var answer Answer
+		err = rows.Scan(
+			&answer.PollId,
+		)
+
+		if err != nil { 
+			return nil, err
+		}
+
+		polls_ids = append(polls_ids, answer.PollId)
+	}
+
+	if rows.Err() != nil { 
+		return nil, err
+	}
+	inResult := make(map[int32]bool)
+	var uniqueIds []int32
+	for _, id := range polls_ids {
+        if _, ok := inResult[id]; !ok {
+            inResult[id] = true
+            uniqueIds = append(uniqueIds, id)
+        }
+    }
+
+	// fmt.Println(uniqueIds)
+
+	var polls []Poll
+	for _, pollId := range uniqueIds { 
+		poll, err := GetPoll(int32(pollId))
+		polls = append(polls, poll)
+		if err != nil { 
+			return nil, err
+		}
+	}
+
+	return &polls, nil
+}

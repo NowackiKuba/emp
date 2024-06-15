@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Briefcase, Star } from 'lucide-react';
 import EmployeeTasksCard from '../cards/EmployeeTasksCard';
 import EmployeeWorkHistoryCard from '../cards/EmployeeWorkHistoryCard';
+import EmployeeAnsweredCard from '../cards/EmployeeAnsweredCard';
 
 interface Props extends TDialogProps {
   user: TUser;
@@ -48,12 +49,8 @@ const EmployeeDetails = ({ user, open, setOpen }: Props) => {
           <EmployeeWorkHistoryCard userId={user?.id} />
         </div>
         <div className='flex items-center gap-2 w-full'>
-          <div className='w-1/2 rounded-xl bg-secondary p-4 flex flex-col'>
-            Surveys
-          </div>
-          <div className='w-1/2 rounded-xl bg-secondary p-4 flex flex-col'>
-            Poll
-          </div>
+          <EmployeeAnsweredCard userId={user?.id} type='survey' />
+          <EmployeeAnsweredCard userId={user?.id} type='poll' />
         </div>
       </DialogContent>
     </Dialog>

@@ -16,15 +16,6 @@ const Surveys = () => {
     queryFn: async () => await getCompanySurveys(),
   });
 
-  const [currentUserId, SetCurrentUserId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchCurrentUserId = async () => {
-      const { userId } = await getTokenValues();
-      SetCurrentUserId(userId);
-    };
-    fetchCurrentUserId();
-  }, []);
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -42,7 +33,7 @@ const Surveys = () => {
       </div>
       <div className='flex items-center gap-2 w-full'>
         {surveys?.map((s) => (
-          <SurveyCard currentUserId={currentUserId} survey={s} key={s.id} />
+          <SurveyCard survey={s} key={s.id} />
         ))}
       </div>
       <CreateSurvey open={isOpenCreate} setOpen={setIsOpenCreate} />

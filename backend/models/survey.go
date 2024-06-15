@@ -167,3 +167,29 @@ func GetSurveyQuestions(id int32) (*[]SurveyQuestion, error) {
 	return &questions, nil
 
 }
+
+
+func getSurvey(id int32) (Survey, error) { 
+	query := `SELECT * FROM surveys WHERE id = $1`
+
+	row := db.DB.QueryRow(query, id)
+
+	var survey Survey
+
+	err := row.Scan(
+		&survey.ID,
+		&survey.CreatedAt,
+		&survey.UpdatedAt,
+		&survey.Title,
+		&survey.CreatedById,
+		&survey.CompanyId,
+		&survey.StartDate,
+		&survey.EndDate,
+	)
+
+	if err != nil { 
+		return Survey{}, err
+	}
+
+	return survey, nil
+}

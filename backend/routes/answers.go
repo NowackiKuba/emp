@@ -48,3 +48,22 @@ func answerPoll(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "Successfully answered poll"})
 }
+
+func getUserAnsweredPolls(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("userId"), 10, 64)
+
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse poll's ID"})
+		return
+	}
+
+	polls, err := models.GetUseredAnsweredPolls(int32(id))
+
+		if err != nil {
+			fmt.Println(err)
+			context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+			return
+		}
+
+	context.JSON(http.StatusOK, gin.H{"polls": polls})
+}

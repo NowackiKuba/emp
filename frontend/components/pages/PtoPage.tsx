@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Bot, CirclePlus, Eye, FileText, Ghost } from 'lucide-react';
 import CreatePTO from '../dialogs/CreatePTO';
@@ -14,19 +14,39 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { useUser } from '@/hooks/useUser';
 
 const PtoPage = () => {
-  const { data: ptos, isLoading } = useQuery({
+  const { user } = useUser();
+  const { data, isLoading } = useQuery({
     queryKey: ['getPtos'],
     queryFn: async () => await getCompanyPtos(),
   });
-  console.log(ptos);
+  const [ptos, setPtos] = useState<TPTO[]>();
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
   const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false);
   const [selectedRequest, setSelectedRequest] = useState<TPTO>();
   const [statusFilter, setStatusFilter] = useState<
     'assigned' | 'rejected' | 'accepted'
   >('assigned');
+
+  useEffect(() => {
+    switch (statusFilter) {
+      case 'assigned':
+        const assigned = data?.filter((pto) => pto.status === 'ASSIGNED');
+        setPtos(assigned);
+        break;
+      case 'rejected':
+        const rejected = data?.filter((pto) => pto.status === 'REJECTED');
+        setPtos(rejected);
+        break;
+      case 'accepted':
+        const accepted = data?.filter((pto) => pto.status === 'ACCEPTED');
+        setPtos(accepted);
+        break;
+    }
+  }, [statusFilter, data]);
+
   return (
     <div className='flex flex-col gap-4 w-full'>
       <div className='flex items-center justify-between'>
@@ -36,7 +56,7 @@ const PtoPage = () => {
           onClick={() => setIsOpenCreate(true)}
         >
           <CirclePlus />
-          <p>Add PTO</p>
+          <p>File PTO Request</p>
         </Button>
       </div>
       <div className='flex items-center gap-2'>
@@ -60,25 +80,26 @@ const PtoPage = () => {
         </Button>
       </div>
       <div className='flex items-center gap-2 w-full'>
-        {ptos?.length === 0 ? <div>asd</div> : null}
+        {!ptos ||
+          (ptos.length <= 0 && (
+            <div className='flex items-center flex-col justify-center w-full h-full gap-1 mt-12'>
+              <p className='text-lg font-semibold'>
+                No PTO&apos;s to show right now
+              </p>
+              <p className='text-gray-400'>
+                {statusFilter} PTO&apos;s will show up here
+              </p>
+            </div>
+          ))}
         {ptos?.map((pto) => (
           <div
             key={pto.id}
-            className={`${
-              statusFilter === 'assigned'
-                ? pto.status === 'ASSIGNED'
-                  ? 'flex'
-                  : 'hidden'
-                : statusFilter === 'rejected'
-                ? pto.status === 'REJECTED'
-                  ? 'flex'
-                  : 'hidden'
-                : statusFilter === 'accepted'
-                ? pto.status === 'ACCEPTED'
-                  ? 'flex'
-                  : 'hidden'
+            className={` h-80 ${
+              user?.role.toLowerCase() === 'employee' &&
+              user.id !== pto.send_by_id
+                ? 'hidden'
                 : 'flex'
-            } h-80 w-80 rounded-xl bg-secondary px-4 py-2 flex flex-col gap-1`}
+            } w-full md:w-80 rounded-xl bg-secondary px-4 py-2 flex flex-col gap-1`}
           >
             <div className='flex items-center gap-2'>
               <Avatar className='h-16 w-16 rounded-xl'>

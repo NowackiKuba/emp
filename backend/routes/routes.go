@@ -20,6 +20,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.PATCH("/task/:taskId", updateTask)
 	server.PATCH("/start-work/:userId", startWork)
 	server.PATCH("/end-work/:userId", endWork)
+	server.PATCH("/manage-break/:id", manageBreak)
 
 	server.GET("/employees/:companyId", getCompanyUsers)
 	server.GET("/pto/:companyId", getCompanyPtos)
@@ -27,12 +28,15 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/employee/work-history/:userId", getUserWorkHistory)
 	server.GET("/user/:id", getUserById)
 	server.GET("/user/surveys/:userId", getUserById)
+	server.GET("/user/answered-polls/:userId", getUserAnsweredPolls)
+	server.GET("/user/answered-surveys/:userId", getUserAnsweredSurveys)
 	server.GET("/task/:id", getTaskById)
 	server.GET("/tasks/employee/:userId", getEmployeeTasks)
 	server.GET("/surveys/:companyId", getCompanySurveys)
 	server.GET("/questions/:surveyId", GetSurveyQuestions)
 	server.GET("/polls/:companyId", getCompanyPolls)
 	server.GET("/answers/:pollId", getPollAnswers)
+	server.GET("/survey/answers/:surveyId", getSurveyAnswers)
 
 	server.DELETE("/task/:id")
 	server.DELETE("/employee/:id", deleteEmployee)

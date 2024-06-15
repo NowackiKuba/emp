@@ -110,3 +110,31 @@ func GetCompanyPolls(id int32) (*[]Poll, error) {
 
 	return &polls, nil
 }
+
+
+func GetPoll(id int32) (Poll, error) { 
+	query := `SELECT * FROM polls WHERE id = $1`
+
+	row := db.DB.QueryRow(query, id)
+
+	var poll Poll
+
+	err := row.Scan(
+		&poll.ID,
+		&poll.Title,
+		&poll.Description,
+		&poll.CreatedAt,
+		&poll.UpdatedAt,
+		&poll.StartsOn,
+		&poll.EndsOn,
+		pq.Array(&poll.Questions),
+		&poll.CreatedById,
+		&poll.CompanyId,
+	)
+
+	if err != nil { 
+		return Poll{}, err
+	}
+
+	return poll, err
+}

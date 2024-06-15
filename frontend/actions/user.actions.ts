@@ -134,3 +134,49 @@ export const getUserWorkHistory = async ({
 
   return res.data.history;
 };
+
+export const manageBreak = async ({
+  id,
+  isOnBreak,
+}: {
+  id: number;
+  isOnBreak: boolean;
+}) => {
+  const res = await axios(`http://localhost:8080/manage-break/${id}`, {
+    method: 'PATCH',
+    data: {
+      is_on_break: isOnBreak,
+    },
+  });
+
+  return;
+};
+
+export const getUserAnsweredPolls = async ({
+  userId,
+}: {
+  userId: number;
+}): Promise<TPoll[]> => {
+  const res = await axios(
+    `http://localhost:8080/user/answered-polls/${userId}`,
+    {
+      method: 'GET',
+    }
+  );
+
+  return res.data.polls;
+};
+export const getUserAnsweredSurveys = async ({
+  userId,
+}: {
+  userId: number;
+}): Promise<TSurvey[]> => {
+  const res = await axios(
+    `http://localhost:8080/user/answered-surveys/${userId}`,
+    {
+      method: 'GET',
+    }
+  );
+
+  return res.data.surveys;
+};
