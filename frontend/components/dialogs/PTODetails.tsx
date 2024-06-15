@@ -98,6 +98,7 @@ const PTODetails = ({ open, setOpen, pto }: Props) => {
               answer({
                 ptoId: pto?.id!,
                 decision: 'REJECTED',
+                userId: pto?.send_by_id!,
               });
             }}
             disabled={isAnswering || pto?.status !== 'ASSIGNED'}
@@ -117,6 +118,7 @@ const PTODetails = ({ open, setOpen, pto }: Props) => {
               answer({
                 ptoId: pto?.id!,
                 decision: 'ACCEPTED',
+                userId: pto?.send_by_id!,
               });
             }}
             disabled={isAnswering || pto?.status !== 'ASSIGNED'}

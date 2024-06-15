@@ -10,6 +10,7 @@ import {
 } from './ui/dropdown-menu';
 import Image from 'next/image';
 import {
+  Bell,
   Bookmark,
   CreditCard,
   LogOut,
@@ -29,10 +30,13 @@ import {
 } from './ui/tooltip';
 import Link from 'next/link';
 import WorkDialog from './dialogs/WorkDialog';
+import Notifications from './dialogs/Notifications';
+import NotificationsSheet from './NotificationsSheet';
 
 const UserButton = ({ user }: { user: TUser }) => {
   const { theme, setTheme } = useTheme();
   const [isOpenWorkDialog, setOpenWorkDialog] = useState(false);
+  const [isOpenNotifications, setIsOpenNotifications] = useState(false);
   console.log(user);
   return (
     <div className='flex items-center gap-2'>
@@ -108,9 +112,12 @@ const UserButton = ({ user }: { user: TUser }) => {
               <p>Settings</p>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
-            <Bookmark className='h-4 w-4' />
-            <p>Saved</p>
+          <DropdownMenuItem
+            onClick={() => setIsOpenNotifications(true)}
+            className='flex items-center gap-2 cursor-pointer'
+          >
+            <Bell className='h-4 w-4' />
+            <p>Notifications</p>
           </DropdownMenuItem>
           <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
             <CreditCard className='h-4 w-4' />
@@ -146,6 +153,11 @@ const UserButton = ({ user }: { user: TUser }) => {
       <WorkDialog
         open={isOpenWorkDialog}
         setOpen={setOpenWorkDialog}
+        user={user}
+      />
+      <NotificationsSheet
+        open={isOpenNotifications}
+        setOpen={setIsOpenNotifications}
         user={user}
       />
     </div>

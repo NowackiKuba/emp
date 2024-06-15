@@ -218,4 +218,20 @@ func CreateTables(DB *sql.DB) {
 		fmt.Println(err)
 		panic("Could not create ptos table")
 	}
+	createNotificationTable := `CREATE TABLE IF NOT EXISTS notifications (
+		id SERIAL PRIMARY KEY,
+		created_at TIMESTAMP DEFAULT NOW(),
+		updated_at TIMESTAMP DEFAULT NOW(),
+		title TEXT NOT NULL,
+		message TEXT NOT NULL,
+		to_id INTEGER NOT NULL,
+		is_read BOOLEAN DEFAULT FALSE,
+		FOREIGN KEY (to_id) REFERENCES users (id) ON DELETE CASCADE
+	)`
+
+	_, err = DB.Exec(createNotificationTable)
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create ptos table")
+	}
 }

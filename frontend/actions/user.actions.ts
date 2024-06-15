@@ -180,3 +180,15 @@ export const getUserAnsweredSurveys = async ({
 
   return res.data.surveys;
 };
+
+export const getUserNotifications = async ({
+  userId,
+}: {
+  userId: number;
+}): Promise<TNotification[]> => {
+  const res = await axios(`http://localhost:8080/notifications/${userId}`, {
+    method: 'GET',
+  });
+
+  return res.data.notifications;
+};

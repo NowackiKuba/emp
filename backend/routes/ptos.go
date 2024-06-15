@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"example.com/employees/models"
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,13 @@ func getCompanyPtos(context *gin.Context) {
 
 func updatePTO(context *gin.Context) { 
 	id, err := strconv.ParseInt(context.Param("ptoId"), 10, 64)
+	
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse data"})
+		return
+	}
+
+	userId, err := strconv.ParseInt(context.Query("userId"), 10 ,64)
 
 	if err != nil { 
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse data"})
@@ -68,7 +76,29 @@ func updatePTO(context *gin.Context) {
 
 	updatedPTO.ID = int32(id)
 
-	err = updatedPTO.Update()
+	err, result := updatedPTO.Update()
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+	var message string
+	if result { 
+		message = "Your PTO Request has been accepted"
+	} else { 
+		message = "Your PTO Request has been rejected"
+	}
+
+	notification := models.Notification{
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Title: "Your PTO Request Result",
+		Message: message,
+		ToId: int32(userId),
+		IsRead: false,
+	}
+
+	err = notification.Create()
 
 	if err != nil { 
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})

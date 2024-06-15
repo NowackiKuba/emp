@@ -44,17 +44,22 @@ export const getCompanyPtos = async (): Promise<TPTO[]> => {
 export const answerPTO = async ({
   ptoId,
   decision,
+  userId,
 }: {
   ptoId: number;
   decision: 'ACCEPTED' | 'REJECTED';
+  userId: number;
 }) => {
-  const res = await axios(`http://localhost:8080/pto/${ptoId}`, {
-    method: 'PATCH',
-    data: {
-      status: decision,
-      accepted: decision === 'ACCEPTED' ? true : false,
-    },
-  });
+  const res = await axios(
+    `http://localhost:8080/pto/${ptoId}?userId=${userId}`,
+    {
+      method: 'PATCH',
+      data: {
+        status: decision,
+        accepted: decision === 'ACCEPTED' ? true : false,
+      },
+    }
+  );
 
   return;
 };

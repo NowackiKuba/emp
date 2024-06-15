@@ -136,18 +136,19 @@ func GetPTO(id int32) (*PTO, error) {
 	return &pto, nil
 }
 
-func (p *PTO) Update() error {
+func (p *PTO) Update() (error, bool) {
 	query := `UPDATE ptos SET status = $1, accepted = $2 WHERE id = $3`
 
 	stmt, err := db.DB.Prepare(query)
 
 	if err != nil { 
-		return err
+		return err, false
 	}
 
 	defer stmt.Close()
 	_, err = stmt.Exec(p.Status, p.Accepted, p.ID)
 
-	return err
+
+	return err, p.Accepted
 
 }

@@ -10,6 +10,7 @@ type TPTO = PTO;
 type TSurvey = Survey;
 type TQuestion = SurveyQuestion;
 type TWorkDay = WorkDay;
+type TNotification = Notification;
 
 interface User {
   id: number;
@@ -155,4 +156,15 @@ interface WorkDay {
   user: User;
   created_at: Date;
   updated_at: Date;
+}
+
+interface Notification {
+  id: number;
+  readonly title: string;
+  message: string;
+  created_at: Date;
+  updated_at: Date;
+  to: User;
+  to_id: number;
+  is_read: boolean;
 }
