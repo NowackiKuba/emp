@@ -5,10 +5,14 @@ import { BarChart, CirclePlus } from 'lucide-react';
 import CreatePoll from '../dialogs/CreatePoll';
 import { usePolls } from '@/hooks/usePolls';
 import PollCard from '../cards/PollCard';
+import { format } from 'date-fns';
 
 const Polls = () => {
   const [isOpenCreate, setIsOpenCreate] = useState<boolean>(false);
-  const { polls, isLoading } = usePolls();
+  const { polls, isLoading } = usePolls({
+    startDate: format(new Date('1900-01-01'), 'MM-dd-yyyy HH:mm'),
+    endDate: format(new Date('2200-01-01'), 'MM-dd-yyyy HH:mm'),
+  });
 
   return (
     <div className='flex flex-col gap-4 w-full'>

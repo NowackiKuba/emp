@@ -43,10 +43,10 @@ func (p *Poll) Create() error {
 
 }
 
-func GetCompanyPolls(id int32) (*[]Poll, error) { 
-	query := `SELECT p.*, c.* AS company, u.* AS user FROM polls p LEFT JOIN companies c ON p.company_id = c.id LEFT JOIN users u ON p.created_by = u.id WHERE p.company_id = $1` 
+func GetCompanyPolls(id int32, startDate, endDate time.Time) (*[]Poll, error) { 
+	query := `SELECT p.*, c.* AS company, u.* AS user FROM polls p LEFT JOIN companies c ON p.company_id = c.id LEFT JOIN users u ON p.created_by = u.id WHERE p.company_id = $1 AND p.starts_on::date > $2 AND p.ends_on::date < $3` 
 
-	rows, err := db.DB.Query(query, id)
+	rows, err := db.DB.Query(query, id, startDate, endDate)
 
 	if err != nil { 
 		return nil, fmt.Errorf("could not execute query: %v", err)

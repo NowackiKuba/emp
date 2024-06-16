@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { getTokenValues } from './auth.actions';
+import { format } from 'date-fns';
 
 export const createPoll = async ({
   title,
@@ -33,11 +34,20 @@ export const createPoll = async ({
   return;
 };
 
-export const getCompanyPolls = async (): Promise<TPoll[]> => {
+export const getCompanyPolls = async ({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}): Promise<TPoll[]> => {
   const { companyId } = await getTokenValues();
-  const res = await axios(`http://localhost:8080/polls/${companyId}`, {
-    method: 'GET',
-  });
+  const res = await axios(
+    `http://localhost:8080/polls/${companyId}?start_date=${startDate}&end_date=${endDate}`,
+    {
+      method: 'GET',
+    }
+  );
 
   return res.data.polls;
 };

@@ -42,5 +42,5 @@ func RegisterRoutes(server *gin.Engine) {
 
 	server.DELETE("/task/:id")
 	server.DELETE("/employee/:id", deleteEmployee)
-	server.DELETE("/notification/:id", deleteEmployee)
+	server.DELETE("/notification/:id", deleteNotification)
 }

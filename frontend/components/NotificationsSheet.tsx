@@ -47,11 +47,11 @@ const NotificationsSheet = ({ open, setOpen, user }: Props) => {
       <SheetContent className='flex flex-col gap-4 w-full '>
         <div className='flex items-center gap-2'>
           <p className='text-xl font-semibold'>Notifications</p>
-          {unreadNotifications?.length && (
+          {unreadNotifications?.length ? (
             <div className='h-5 w-5 rounded-full flex items-center justify-center text-xs font-semibold bg-red-500 text-white'>
               {unreadNotifications.length}
             </div>
-          )}
+          ) : null}
         </div>
         {notifications?.map((n) => (
           <div

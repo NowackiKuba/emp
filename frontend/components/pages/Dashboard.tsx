@@ -7,6 +7,7 @@ import { useCompanyEmployees } from '@/hooks/useCompanyEmployees';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { ChevronRight } from 'lucide-react';
 import EmployeeDetails from '../dialogs/EmployeeDetails';
+import ActivePolls from '../cards/ActivePolls';
 
 const Dashboard = () => {
   const { user } = useUser();
@@ -35,23 +36,23 @@ const Dashboard = () => {
         Hi 👋🏻, {user?.first_name} {user?.last_name}
       </p>
       <div className='flex items-center gap-4'>
-        <div className='rounded-xl bg-secondary h-64 w-96 hidden md:flex flex-col items-start justify-end pb-8 px-4'>
+        <div className='rounded-xl bg-secondary h-80 w-96 hidden md:flex flex-col items-start justify-end pb-8 px-4'>
           <p>Today</p>
           <p className='text-[28px] font-semibold'>
             {format(new Date(), 'PPPP')}
           </p>
         </div>
-        <div className='w-full md:w-[calc(100%-384px)] bg-secondary rounded-xl h-64'></div>
+        <ActivePolls />
       </div>
       <div className='flex md:flex-row flex-col items-center gap-4'>
-        <div className='rounded-xl bg-secondary w-full h-64 flex flex-col py-2 px-4'>
+        <div className='rounded-xl bg-secondary w-full h-80 flex flex-col py-2 px-4'>
           <div className='flex items-center gap-2.5'>
             <div className='h-5 w-5 rounded-full bg-green-500' />
             <p className='text-xl font-[500]'>Currently Working</p>
           </div>
-          <div className='flex  flex-col w-full mt-1.5 gap-2'>
+          <div className='flex  flex-col w-full  gap-2'>
             {!workingEmployees?.length && (
-              <div className='flex items-center flex-col justify-center gap-1 mt-12'>
+              <div className='flex items-center flex-col justify-center gap-1 h-64'>
                 <p className='text-lg font-semibold'>
                   No one is working right now
                 </p>
@@ -89,7 +90,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-        <div className='w-full bg-secondary rounded-xl h-64'></div>
+        <div className='w-full bg-secondary rounded-xl h-80'></div>
       </div>
 
       <StartWorkDialog

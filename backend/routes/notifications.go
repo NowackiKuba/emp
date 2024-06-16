@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -32,6 +33,7 @@ func getUserNotifications(context *gin.Context) {
 	id, err := strconv.ParseInt(context.Param("userId"), 10, 64)
 
 	if err != nil { 
+		fmt.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
 		return
 	}
@@ -50,6 +52,7 @@ func readNotification(context *gin.Context) {
 	id, err := strconv.ParseInt(context.Param("notificationId"), 10, 64)
 
 	if err != nil { 
+		fmt.Println(err)
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
 		return
 	}
