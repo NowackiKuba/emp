@@ -15,9 +15,31 @@ export const getCompanyEmployees = async (): Promise<TUser[]> => {
 };
 
 export const getCompanyById = async (): Promise<TCompany> => {
-  const token = cookies().get('token');
+  const { companyId } = await getTokenValues();
 
-  const res = await axios(`http://localhost:8080/company/${token?.value}`);
+  const res = await axios(`http://localhost:8080/company/${companyId}`);
 
   return res.data.company;
+};
+
+export const updateCompany = async ({
+  name,
+  email,
+  logo_url,
+}: {
+  name: string;
+  email: string;
+  logo_url: string;
+}) => {
+  const { companyId } = await getTokenValues();
+  const res = await axios(`http://localhost:8080/company/${companyId}`, {
+    method: 'PATCH',
+    data: {
+      name,
+      email,
+      logo_url,
+    },
+  });
+
+  return;
 };

@@ -8,9 +8,10 @@ type TPoll = Poll;
 type TAnswer = Answer;
 type TPTO = PTO;
 type TSurvey = Survey;
-type TQuestion = SurveyQuestion;
+type TSurveyQuestion = SurveyQuestion;
 type TWorkDay = WorkDay;
 type TNotification = Notification;
+type TQuestion = Question;
 
 interface User {
   id: number;
@@ -59,7 +60,6 @@ interface Company {
   name: string;
   email: string;
   logoUrl: string;
-  users: User[];
 }
 
 interface DialogProps {
@@ -167,4 +167,18 @@ interface Notification {
   to: User;
   to_id: number;
   is_read: boolean;
+}
+
+interface Question {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  from_id: number;
+  to_id: number;
+  question: string;
+  company_id: number;
+  answer?: string;
+  company: Company;
+  from: User;
+  to: User;
 }

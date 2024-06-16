@@ -31,12 +31,12 @@ const Dashboard = () => {
 
   const workingEmployees = employees?.filter((e) => e.is_working);
   return (
-    <div className='flex flex-col gap-4 w-full'>
+    <div className='flex flex-col gap-4 w-full sm:pb-8 pb-2'>
       <p className='text-2xl font-semibold'>
         Hi 👋🏻, {user?.first_name} {user?.last_name}
       </p>
       <div className='flex items-center gap-4'>
-        <div className='rounded-xl bg-secondary h-80 w-96 hidden md:flex flex-col items-start justify-end pb-8 px-4'>
+        <div className='rounded-xl bg-secondary h-96 w-full overflow-x-auto max-w-96 hidden md:flex flex-col items-start justify-end pb-8 px-4'>
           <p>Today</p>
           <p className='text-[28px] font-semibold'>
             {format(new Date(), 'PPPP')}

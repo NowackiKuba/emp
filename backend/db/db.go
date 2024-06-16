@@ -234,4 +234,24 @@ func CreateTables(DB *sql.DB) {
 		fmt.Println(err)
 		panic("Could not create ptos table")
 	}
+
+	createQuestionsTable := `CREATE TABLE IF NOT EXISTS questions (
+		id SERIAL PRIMARY KEY,
+		created_at TIMESTAMP DEFAULT NOW(),
+		updated_at TIMESTAMP DEFAULT NOW(),
+		question TEXT NOT NULL,
+		answer TEXT DEFAULT NULL,
+		to_id INTEGER NOT NULL,
+		from_id INTEGER NOT NULL,
+		company_id INTEGER NOT NULL,
+		FOREIGN KEY (to_id) REFERENCES users (id) ON DELETE CASCADE,
+		FOREIGN KEY (from_id) REFERENCES users (id) ON DELETE CASCADE,
+		FOREIGN KEY (company_id) REFERENCES companies (id) ON DELETE CASCADE
+	)`
+
+	_, err = DB.Exec(createQuestionsTable)
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create ptos table")
+	}
 }

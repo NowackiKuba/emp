@@ -46,7 +46,7 @@ export const getSurveyQuestions = async ({
   surveyId,
 }: {
   surveyId: number;
-}): Promise<TQuestion[]> => {
+}): Promise<TSurveyQuestion[]> => {
   const res = await axios(`http://localhost:8080/questions/${surveyId}`, {
     method: 'GET',
   });

@@ -58,6 +58,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteEmployee } from '@/actions/user.actions';
 import { toast } from '../ui/use-toast';
 import EmployeeDetails from '../dialogs/EmployeeDetails';
+import AskQuestion from '../dialogs/AskQuestion';
 
 const Employees = () => {
   const { employees, isLoading } = useCompanyEmployees();
@@ -66,6 +67,7 @@ const Employees = () => {
   const [isOpenEdit, setIsOpenEdit] = useState<boolean>(false);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const [isOpenDetails, setIsOpenDetails] = useState<boolean>(false);
+  const [isOpenQuestion, setIsOpenQuestion] = useState<boolean>(false);
   const [employeeId, setEmployeeId] = useState<number>(0);
   const [activeSort, setActiveSort] = useState<string | undefined>();
   const [selectedEmployee, setSelectedEmployee] = useState<TUser>();
@@ -117,18 +119,19 @@ const Employees = () => {
   if (isLoading) {
     return <p>...loading</p>;
   }
+  const isMobile = window.innerWidth < 380;
   return (
     <div className='flex flex-col w-full gap-4'>
       <div className='flex items-center justify-between w-full'>
         <div className='flex items-center w-full gap-2'>
           <Searchbar
-            placeholder='Search for employees'
+            placeholder={isMobile ? 'Aa' : 'Search for employees'}
             iconPosition='left'
             route='/employees'
-            otherClasses='lg:max-w-[280px] md:max-w-[220px] max-w-[240px]'
+            otherClasses='lg:max-w-[280px] md:max-w-[220px] max-w-[calc(100%-50px)]'
           />
           <Select onValueChange={(e) => handleSort(e)}>
-            <SelectTrigger className='md:max-w-[180px] max-w-[140px]'>
+            <SelectTrigger className='md:max-w-[180px] sm:flex hidden max-w-[140px]'>
               <SelectValue placeholder='Sort' />
             </SelectTrigger>
             <SelectContent>
@@ -171,12 +174,12 @@ const Employees = () => {
             {employees?.map((employee) => (
               <TableRow key={employee.id}>
                 <TableCell>
-                  <Avatar className='h-16 w-16 rounded-md'>
+                  <Avatar className='h-12 w-12 rounded-md'>
                     <AvatarImage
                       src={employee.img_url}
-                      className='h-16 w-16 rounded-md object-cover'
+                      className='h-12 w-12 rounded-md object-cover'
                     />
-                    <AvatarFallback className='h-16 w-16 rounded-md'>
+                    <AvatarFallback className='h-12 w-12 rounded-md'>
                       <div className='h-full w-full bg-primary/10 text-primary dark:bg-red-500/20 dark:text-red-200 flex items-center justify-center text-xl font-bold'>
                         {employee.first_name[0]}
                         {employee.last_name[0]}
@@ -205,7 +208,7 @@ const Employees = () => {
                     'Not working'
                   )}
                 </TableCell>
-                <TableCell className='flex justify-end items-end'>
+                <TableCell className='flex justify-end items-center'>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant={'ghost'} size={'icon'}>
@@ -243,7 +246,13 @@ const Employees = () => {
                         <CircleCheck className='h-4 w-4' />
                         <p>Assign Task</p>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className='flex items-center gap-2 cursor-pointer'>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setEmployeeId(employee.id);
+                          setIsOpenQuestion(true);
+                        }}
+                        className='flex items-center gap-2 cursor-pointer'
+                      >
                         <FileQuestion className='h-4 w-4' />
                         <p>Ask Question</p>
                       </DropdownMenuItem>
@@ -349,6 +358,11 @@ const Employees = () => {
         open={isOpenDetails}
         setOpen={setIsOpenDetails}
         user={selectedEmployee!}
+      />
+      <AskQuestion
+        open={isOpenQuestion}
+        setOpen={setIsOpenQuestion}
+        userId={employeeId!}
       />
     </div>
   );

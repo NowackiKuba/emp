@@ -27,7 +27,7 @@ const SurveyCard = ({ survey }: Props) => {
   return (
     <div
       key={survey.id}
-      className='h-80 w-80 rounded-xl p-2 bg-secondary flex flex-col gap-1'
+      className='h-80 w-full sm:w-96 rounded-xl p-2 bg-secondary flex flex-col gap-1'
     >
       <div className='flex items-center gap-2'>
         <div className='h-24 w-24 bg-primary/10 rounded-full text-primary dark:bg-red-500/20 dark:text-red-200 flex items-center justify-center'>

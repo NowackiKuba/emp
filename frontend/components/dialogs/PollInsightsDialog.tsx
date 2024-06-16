@@ -3,7 +3,7 @@ import { Dialog, DialogContent } from '../ui/dialog';
 import { Label } from '../ui/label';
 import { useQuery } from '@tanstack/react-query';
 import { getPollAnswers } from '@/actions/poll.actions';
-import { getPollChartData } from '@/lib/utils';
+import { calculatePollData, getPollChartData } from '@/lib/utils';
 import PollInsightsChart from '../charts/PollInsightsChart';
 import {
   Table,
@@ -24,6 +24,8 @@ interface Props extends TDialogProps {
 
 const PollInsightsDialog = ({ poll, setOpen, open, answers }: Props) => {
   const chartData = getPollChartData(answers || []);
+  const pollData = calculatePollData(answers || []);
+
   return (
     <Dialog
       open={open}
@@ -41,12 +43,19 @@ const PollInsightsDialog = ({ poll, setOpen, open, answers }: Props) => {
           {poll.questions.map((q, i) => (
             <div
               key={i}
-              className={`flex items-center justify-between w-full border py-4 px-3 `}
+              className={`flex items-center justify-between w-full border h-14 pr-3`}
             >
-              <div className='flex items-center gap-2'>
-                <Label htmlFor={q}>{q}</Label>
+              <div
+                style={{
+                  width: `${pollData?.find((a) => a.name === q)?.percentage}%`,
+                }}
+                className='bg-gradient-to-r from-primary h-full flex items-center justify-between'
+              >
+                <div className='flex items-center gap-2 px-3'>
+                  <Label htmlFor={q}>{q}</Label>
+                </div>
               </div>
-              <p>{q === 'TAK' ? '66%' : '33%'}</p>
+              <p>{pollData?.find((a) => a.name === q)?.percentage} %</p>
             </div>
           ))}
         </div>

@@ -3,6 +3,7 @@ import {
   BarChart4,
   Building,
   CircleCheck,
+  FileQuestion,
   FileText,
   Home,
   Lock,
@@ -20,6 +21,7 @@ export const navLinks = [
   { id: 3, name: 'Tasks', href: '/tasks', icon: CircleCheck },
   { id: 4, name: 'Surveys', href: '/surveys', icon: NotepadText },
   { id: 5, name: 'Analytics', href: '/analytics', icon: BarChart4 },
+  { id: 8, name: 'Questions', href: '/questions', icon: FileQuestion },
   { id: 7, name: "PTO's", href: '/pto', icon: FileText },
 ];
 

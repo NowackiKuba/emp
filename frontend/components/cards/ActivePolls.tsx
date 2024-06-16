@@ -7,12 +7,12 @@ import { format } from 'date-fns';
 const ActivePolls = () => {
   const { polls, isLoading } = usePolls({
     startDate: format(new Date(), 'MM-dd-yyyy HH:mm'),
-    endDate: '01-01-2200 00:00',
+    endDate: format(new Date('2200-01-01'), 'MM-dd-yyyy HH:mm'),
   });
 
   console.log(polls);
   return (
-    <div className='w-full p-3 md:w-[calc(100%-384px)] bg-secondary rounded-xl h-80 flex flex-col items-start justify-start gap-2'>
+    <div className='w-full p-3 md:w-[calc(100%-384px)] bg-secondary rounded-xl h-96 flex flex-col items-start justify-start gap-2'>
       <p className='text-2xl font-semibold'>Active Polls</p>
       {!polls?.length && (
         <div className='flex items-center flex-col w-full justify-center gap-1 h-64'>
@@ -21,7 +21,7 @@ const ActivePolls = () => {
         </div>
       )}
       {polls?.map((p) => (
-        <PollCard poll={p!} key={p.id} />
+        <PollCard poll={p!} key={p.id} otherClasses='bg-background' />
       ))}
     </div>
   );

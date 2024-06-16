@@ -13,6 +13,7 @@ import {
   Bell,
   Bookmark,
   CreditCard,
+  FileQuestion,
   LogOut,
   Moon,
   Settings,
@@ -140,8 +141,8 @@ const UserButton = ({ user }: { user: TUser }) => {
             />
           </DropdownMenuItem>
           <DropdownMenuItem className='flex items-end gap-2 cursor-pointer'>
-            <Ticket className='h-4 w-4' />
-            <p>Subscription</p>
+            <FileQuestion className='h-4 w-4' />
+            <p>Questions</p>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className='flex items-center gap-2 cursor-pointer text-red-500'>

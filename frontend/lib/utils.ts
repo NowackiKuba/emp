@@ -108,3 +108,14 @@ export const getPollChartData = (answers: TAnswer[]) => {
 
   return data;
 };
+
+export const calculatePollData = (answers: TAnswer[]) => {
+  const data = getPollChartData(answers);
+
+  const totalAnswers = data.reduce((acc, curr) => acc + curr.answers, 0);
+
+  return data.map((d) => ({
+    ...d,
+    percentage: ((d.answers / totalAnswers) * 100).toFixed(2),
+  }));
+};

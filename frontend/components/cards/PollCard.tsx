@@ -10,8 +10,15 @@ import PollInsightsDialog from '../dialogs/PollInsightsDialog';
 import { useQuery } from '@tanstack/react-query';
 import { getPollAnswers } from '@/actions/poll.actions';
 import AnsweredDialog from '../dialogs/AnsweredDialog';
+import { cn } from '@/lib/utils';
 
-const PollCard = ({ poll }: { poll: TPoll }) => {
+const PollCard = ({
+  poll,
+  otherClasses,
+}: {
+  poll: TPoll;
+  otherClasses?: string;
+}) => {
   const { data: answers, isLoading } = useQuery({
     queryKey: ['getPollAnswers', poll.id],
     queryFn: async () => await getPollAnswers({ pollId: poll.id }),
@@ -30,7 +37,10 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
   return (
     <div
       key={poll.id}
-      className='h-80 w-full sm:w-80 py-2 rounded-xl bg-secondary flex items-start justify-start flex-col gap-2 px-4'
+      className={cn(
+        'h-80 w-full sm:w-96 py-2 rounded-xl bg-secondary flex items-start justify-start flex-col gap-2 px-4',
+        otherClasses
+      )}
     >
       <div className='flex items-center gap-2'>
         <div className='h-24 w-24 bg-primary/10 rounded-full text-primary dark:bg-red-500/20 dark:text-red-200 flex items-center justify-center'>
@@ -41,7 +51,7 @@ const PollCard = ({ poll }: { poll: TPoll }) => {
             {poll.title}
             {!poll?.title?.includes('?') ? '?' : ''}
           </p>
-          <div className='text-sm text-gray-400 dark:text-gray-600 flex items-center gap-2'>
+          <div className='text-sm text-gray-400 dark:text-gray-600 hidden sm:flex items-center gap-2'>
             by
             <Avatar className='h-8 w-8'>
               <AvatarImage src={poll?.created_by?.img_url} />

@@ -9,75 +9,74 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func createQuestion(context *gin.Context) { 
+	var question models.Question
 
-func createCompany(context *gin.Context) {
-	var company models.Company
+	err := context.ShouldBindJSON(&question)
 
-	err := context.ShouldBindJSON(&company)
-	
 	if err != nil { 
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
 		return
 	}
 
-	companyId, err := company.Create()
+	err = question.Create()
+
+	if err != nil { 
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully created new question"})
+}
+
+
+func getCompanyQuestions(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("companyId"), 10, 64)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+
+	questions, err := models.GetCompanyQuestions(int32(id))
 
 	if err != nil { 
 		fmt.Println(err)
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"companyId": companyId})
+
+	context.JSON(http.StatusOK, gin.H{"questions": questions})
+
 }
 
-
-
-func getCompany(context *gin.Context) { 
-	id, err := strconv.ParseInt(context.Param("id"), 10, 64)
+func answerQuestion(context *gin.Context) { 
+	id, err := strconv.ParseInt(context.Param("questionId"), 10, 64)
 
 	if err != nil { 
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
 		return
 	}
 
-	company, err := models.GetCompany(int32(id))
+	var question models.Question
+
+	err = context.ShouldBindJSON(&question)
+
+	if err != nil { 
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
+		return
+	}
+
+	question.ID = int32(id)
+
+	err = question.Update()
 
 	if err != nil { 
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"company": company})
-}
+	context.JSON(http.StatusOK, gin.H{"message": "Successfully answered question"})
 
-
-func updateCompany(context *gin.Context) { 
-	id, err := strconv.ParseInt(context.Param("id"), 10, 64)
-
-	if err != nil { 
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
-		return
-	}
-	
-	var company models.Company
-
-	err = context.ShouldBindJSON(&company)
-
-
-	if err != nil { 
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse incoming data"})
-		return
-	}
-
-	company.ID = int32(id)
-	err = company.Update()
-
-	if err != nil {
-		fmt.Println(err)
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
-		return
-	}
-
-
-	context.JSON(http.StatusOK, gin.H{"message": "Successfully updated company"})
 }

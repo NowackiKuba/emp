@@ -165,7 +165,7 @@ const Tasks = () => {
                       <p className='text-sm font-[500]'>
                         Deadline: {format(t.deadline, 'dd.MM.yyyy')}
                       </p>
-                      <p className='text-sm font-[500] max-w-full truncate'>
+                      <p className='text-sm font-[500] hidden sm:flex truncate'>
                         Assigned By: {t.assigned_by.first_name}{' '}
                         {t.assigned_by.last_name}
                       </p>
